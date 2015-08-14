@@ -1,0 +1,14 @@
+#!/bin/sh
+#Nautilus Script to convert and merge selected files into one multi-page PDF file
+#NOTE: All supported files (bmp, gif, jpg, png, txt) are merged into one multi-page PDF file while some supported document files (e.g. doc, odt) are converted to individual PDF files and saved in a sub-folder named "_dirname"
+#Requires "imagemagick" package which includes "convert"
+#V.1.0
+filesall=""
+while [ $# -gt 0 ]
+	do
+		files=`echo "$1" | sed 's/ /\?/g'`
+		filesall="$files $filesall"
+		shift
+	done
+convert $filesall "$PWD/Merged.pdf"
+xdg-open "$PWD/Merged.pdf"
