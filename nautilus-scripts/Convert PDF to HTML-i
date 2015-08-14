@@ -1,0 +1,13 @@
+#!/bin/bash
+#Nautilus Script to convert selected PDF document(s) to HTML file(s) without images, using these options:
+#Don't use frames and generate a single file, quietly, converting any pdf links to html links, with complex formatting
+#V.2.0
+#Requires "poppler-utils" package which includes "pdftohtml"
+#
+OLDIFS=$IFS
+IFS="
+"
+for filename in $@; do
+pdftohtml -noframes -q -p -c -i "$filename" "${filename%\.*}-img.html"
+done
+IFS=$OLDIFS

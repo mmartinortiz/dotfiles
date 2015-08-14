@@ -1,0 +1,12 @@
+#!/bin/bash
+#Nautilus Script to convert selected PDF document(s) to DJVU file(s)
+#V.4.0
+#Requires "pdf2djvu" package
+#
+OLDIFS=$IFS
+IFS="
+"
+for filename in $@; do
+pdf2djvu -q "$filename" -o "${filename%.*}.djvu";
+done
+IFS=$OLDIFS

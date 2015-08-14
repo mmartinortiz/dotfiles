@@ -1,0 +1,13 @@
+#!/bin/sh
+#Nautilus Script to convert selected (PDF and/or other supported) file(s) to JPG file(s) with 300dpi resolution
+#NOTE: All supported IMAGE (e.g. bmp, jpg, png) and TXT files as well as PDF files are converted to individual JPG files while some supported document files (e.g. doc, odt) are converted to individual PDF files and saved in a sub-folder named "_dirname"
+#Requires "imagemagick" package which includes "convert"
+#V.1.0
+#
+OLDIFS=$IFS
+IFS="
+"
+for filename in $@; do
+convert -density 300 "$filename" "${filename%\.*}.jpg"
+done
+IFS=$OLDIFS

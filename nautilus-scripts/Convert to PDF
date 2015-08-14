@@ -1,0 +1,23 @@
+#!/bin/sh
+#Nautilus Script to convert selected files to a single PDF file
+#NOTE: All supported Image (e.g. bmp, gif, jpg, png) and Text files are 
+#converted to individual PDF files while some supported document files 
+#(e.g. doc, odt) are converted to individual PDF files and then saved in
+# a sub-folder named "_dirname"
+#Requires:
+# "imagemagick" package which includes "convert"
+# "zenity"
+#V.1.0
+#
+OLDIFS=$IFS
+IFS="
+"
+
+if [$# -eq 0]; then
+    zenity --error --title="Oops!" --text="We need something to convert!"
+    exit 1
+fi
+
+convert "$@" ${1%.*}.pdf
+
+IFS=$OLDIFS

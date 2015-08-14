@@ -1,0 +1,12 @@
+#!/bin/bash
+#Nautilus Script to convert selected PDF document(s) to TXT file(s)
+#V.2.0
+#Requires "poppler-utils" package which includes "pdftotext"
+#
+OLDIFS=$IFS
+IFS="
+"
+for filename in $@; do
+pdftotext -q "$filename" "${filename%\.*}.txt"
+done
+IFS=$OLDIFS
