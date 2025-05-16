@@ -2,6 +2,7 @@ packages:
   linux:
     packages:
       - bat
+      - bottom
       - devcontainer
       - diffr
       - dust
