@@ -1,0 +1,19 @@
+packages:
+  linux:
+    packages:
+      - bat
+      - devcontainer
+      - diffr
+      - dust
+      - duf
+      - eza
+      - fd
+      - git
+      - gping
+      - grc
+      - lazygit
+      - neovim
+      - procs
+      - ripgrep
+      - tldr
+      - tmux

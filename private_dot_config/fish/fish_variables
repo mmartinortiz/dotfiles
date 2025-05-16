@@ -25,6 +25,7 @@ SETUVAR fish_color_search_match:\x2d\x2dbackground\x3dFFCC66
 SETUVAR fish_color_selection:\x2d\x2dbackground\x3dFFCC66
 SETUVAR fish_color_user:brgreen
 SETUVAR fish_color_valid_path:\x2d\x2dunderline
+SETUVAR fish_key_bindings:fish_default_key_bindings
 SETUVAR fish_pager_color_background:\x1d
 SETUVAR fish_pager_color_completion:normal
 SETUVAR fish_pager_color_description:B3A06D
@@ -39,7 +40,7 @@ SETUVAR fish_pager_color_selected_completion:\x1d
 SETUVAR fish_pager_color_selected_description:\x1d
 SETUVAR fish_pager_color_selected_prefix:\x1d
 SETUVAR --export fish_tmux_config:/home/manolo/\x2econfig/tmux/tmux\x2econf
-SETUVAR fish_user_paths:/home/manolo/bin\x1e/home/manolo/\x2elocal/bin
+SETUVAR fish_user_paths:/var/home/manolo/bin\x1e/var/home/manolo/\x2elocal/bin
 SETUVAR pisces_pairs:\x28\x2c\x29\x1e\x5b\x2c\x5d\x1e\x7b\x2c\x7d\x1e\x22\x2c\x22\x1e\x27\x2c\x27
 SETUVAR pure_begin_prompt_with_current_directory:true
 SETUVAR pure_check_for_new_release:false
