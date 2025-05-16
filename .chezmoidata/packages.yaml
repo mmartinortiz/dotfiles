@@ -15,5 +15,6 @@ packages:
       - neovim
       - procs
       - ripgrep
+      - starship
       - tldr
       - tmux
