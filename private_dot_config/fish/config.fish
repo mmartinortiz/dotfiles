@@ -5,7 +5,7 @@ abbr --add -- gp 'git push'
 abbr --add -- cm 'chezmoi'
 
 # Aliases
-alias cat bat
+alias cat 'bat --plain'
 alias eza 'eza --icons auto --git --hyperlink --group-directories-first --header'
 alias ip 'ip --color --brief'
 alias la 'eza -a'
@@ -15,6 +15,7 @@ alias ll 'eza -l'
 alias lla 'eza -la'
 alias ls eza
 alias lt 'eza --tree'
+alias lta 'eza --tree --all'
 alias man batman
 alias more 'bat --paging=always'
 alias tree 'exa --tree --group-directories-first'
