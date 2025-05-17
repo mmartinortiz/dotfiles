@@ -2,6 +2,7 @@
 abbr --add -- ga 'git add'
 abbr --add -- gc 'git commit -m'
 abbr --add -- gp 'git push'
+abbr --add -- cm 'chezmoi'
 
 # Aliases
 alias cat bat
@@ -85,6 +86,7 @@ set -g fish_pager_color_selected_description
 set -g fish_pager_color_selected_prefix
 
 set -g SHELL /usr/sbin/fish
+set -g EDITOR nvim
 
 if test "$TERM" != dumb
 	/home/linuxbrew/.linuxbrew/bin/starship init fish | source
