@@ -1,8 +1,6 @@
 require("config.lazy")
 require("lazy").setup("plugins")
 
-require("which-key").setup {}
-
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
