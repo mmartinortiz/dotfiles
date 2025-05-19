@@ -1,0 +1,36 @@
+[branch]
+  sort = "-committerdate"
+
+[core]
+  editor = vim
+
+[diff]
+  algorithm = "histogram"
+  compactionHeuristic = true
+  context = 10
+  indentHeuristic = true
+  submodule = "log"
+
+[fetch]
+  prune = true
+
+[init]
+  defaultBranch = "main"
+
+[log]
+  date = "iso"
+
+[push]
+  autoSetupRemote = true
+  default = "current"
+
+[user]
+	email = mmartinortiz@gmail.com
+	name = Manuel
+
+[stash]
+  showPatch = true
+
+[status]
+  showStash = true
+  submoduleSummary = true

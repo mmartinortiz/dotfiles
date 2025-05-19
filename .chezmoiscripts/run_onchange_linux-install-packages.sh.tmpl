@@ -1,9 +1,67 @@
-{{ if eq .chezmoi.os "linux" -}}
 #!/bin/bash
+{{ if eq .chezmoi.os "linux" -}}
+
+{{ if eq .chezmoi.osRelease.id "bluefin" -}}
+echo "Hello Bluefin!"
+{{ end -}}
+
+{{ if eq .chezmoi.osRelease.id "fedora" -}}
+{{ range .packages.linux.fedora.dnf -}}
+echo "Installing {{ . }}"
+sudo dnf install --yes {{ . | quote }}
+{{ end -}}
+{{ end -}}
+
+
+{{ if eq .chezmoi.osRelease.id "ubuntu" -}}
+sudo apt update
+{{ range .packages.linux.ubuntu.apt -}}
+echo "Installing {{ . }}"
+sudo apt install --yes {{ . | quote }}
+{{ end -}}
+{{ end -}}
+
+if ! command -v brew 2>&1 > /dev/null
+then
+  echo "Installing Brew"
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 brew bundle --file=/dev/stdin <<EOF
-{{ range .packages.linux.packages -}}
+{{ range .packages.linux.brew -}}
 brew {{ . | quote }}
 {{ end -}}
 EOF
+
+echo "Installing fisher and Fish plugins"
+if command -v fish 2>&1 >/dev/null
+then
+
+fish <<EOF
+curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source \
+  && fisher install jorgebucaran/fisher
+{{ range .packages.fisher -}}
+fisher install {{ . }}
+{{ end -}}
+EOF
+
+fi
+
+echo "Installing fonts"
+{{ range .packages.fonts -}}
+  if [ ! -d "$HOME/.local/share/fonts/{{ . }}" ] ; then
+      wget "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/{{ . }}.zip" --directory-prefix ~/.local/share/fonts
+      unzip ~/.local/share/fonts/{{ . }}.zip -d ~/.local/share/fonts/{{ . }}/ > /dev/null
+      rm ~/.local/share/fonts/{{ . }}.zip -f
+      rm ~/.local/share/fonts/{{ . }}/*Windows* -f
+      echo "Installed {{ . }}"
+      echo
+  else
+      echo "{{ . }} already installed."
+      echo
+  fi
+{{ end -}}
+
 {{ end -}}

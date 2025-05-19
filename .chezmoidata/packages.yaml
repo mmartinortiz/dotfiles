@@ -1,6 +1,6 @@
 packages:
   linux:
-    packages:
+    brew:
       - bat
       - bottom
       - devcontainer
@@ -9,7 +9,6 @@ packages:
       - duf
       - eza
       - fd
-      - git
       - gping
       - lazygit
       - neovim
@@ -17,3 +16,22 @@ packages:
       - ripgrep
       - starship
       - tldr
+    ubuntu:
+      apt:
+        - fish
+        - git
+    fedora:
+      dnf:
+        - fish
+        - git
+  fisher:
+    - decors/fish-colored-man
+    - edc/bass
+    - jorgebucaran/autopair.fish
+    - jorgebucaran/fisher
+    - laughedelic/pisces
+    - meaningful-ooo/sponge
+    - pure-fish/pure
+  fonts:
+    - Hack
+    - Ubuntu
