@@ -7,6 +7,7 @@ abbr --add -- cm 'chezmoi'
 # Aliases
 alias cat 'bat --plain'
 alias eza 'eza --icons auto --git --hyperlink --group-directories-first --header'
+alias grep 'batgrep'
 alias ip 'ip --color --brief'
 alias la 'eza -a'
 alias less 'bat --paging=always'
@@ -19,9 +20,10 @@ alias lta 'eza --tree --all'
 alias man batman
 alias more 'bat --paging=always'
 alias tree 'exa --tree --group-directories-first'
+alias v nvim
+alias vi nvim
 alias vim nvim
 alias vimdiff 'nvim -d'
-alias grep 'batgrep'
 
 # Interactive shell initialisation
 # Customize "pure" colors and options
@@ -35,11 +37,11 @@ fish_add_path ~/.local/bin
 
 # Enable VI key bindings
 if test -n "$TERM"
-fish_vi_key_bindings
-set -g fish_cursor_default block blink
-set -g fish_cursor_insert line blink
-set -g fish_cursor_replace_one underscore blink
-set -g fish_cursor_visual block
+	fish_vi_key_bindings
+	set -g fish_cursor_default block blink
+	set -g fish_cursor_insert line blink
+	set -g fish_cursor_replace_one underscore blink
+	set -g fish_cursor_visual block
 end
 
 # Sponge plugin config
@@ -87,7 +89,7 @@ set -g fish_pager_color_selected_completion
 set -g fish_pager_color_selected_description
 set -g fish_pager_color_selected_prefix
 
-set -g SHELL /usr/sbin/fish
+set -g SHELL /usr/bin/fish
 set -g EDITOR nvim
 set -g BATDIFF_USE_DELTA true
 
@@ -95,7 +97,7 @@ if test "$TERM" != dumb
 	/home/linuxbrew/.linuxbrew/bin/starship init fish | source
 end
 
-eval "/home/linuxbrew/.linuxbrew/bin/brew shellenv"
+eval (/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 
 batman --export-env | source
 eval (batpipe)
