@@ -34,6 +34,9 @@ set --universal pure_symbol_virtualenv_prefix "" # 🐍
 set --universal pure_color_virtualenv green
 
 fish_add_path ~/.local/bin
+if test -d ~/bin
+	fish_add_path ~/bin
+end
 
 # Enable VI key bindings
 if test -n "$TERM"
