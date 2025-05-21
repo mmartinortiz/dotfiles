@@ -93,3 +93,4 @@ if test "$TERM" != dumb
 	/home/linuxbrew/.linuxbrew/bin/starship init fish | source
 end
 
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

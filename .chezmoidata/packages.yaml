@@ -9,6 +9,7 @@ packages:
       - duf
       - eza
       - fd
+      - gcc
       - gping
       - lazygit
       - neovim
@@ -20,6 +21,7 @@ packages:
       apt:
         - fish
         - git
+        - build-essential
     fedora:
       dnf:
         - fish
