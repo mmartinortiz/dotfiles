@@ -21,6 +21,7 @@ alias more 'bat --paging=always'
 alias tree 'exa --tree --group-directories-first'
 alias vim nvim
 alias vimdiff 'nvim -d'
+alias grep 'batgrep'
 
 # Interactive shell initialisation
 # Customize "pure" colors and options
@@ -88,9 +89,13 @@ set -g fish_pager_color_selected_prefix
 
 set -g SHELL /usr/sbin/fish
 set -g EDITOR nvim
+set -g BATDIFF_USE_DELTA true
 
 if test "$TERM" != dumb
 	/home/linuxbrew/.linuxbrew/bin/starship init fish | source
 end
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+eval "/home/linuxbrew/.linuxbrew/bin/brew shellenv"
+
+batman --export-env | source
+eval (batpipe)

@@ -2,6 +2,7 @@ packages:
   linux:
     brew:
       - bat
+      - bat-extras
       - bottom
       - devcontainer
       - diffr
@@ -10,6 +11,7 @@ packages:
       - eza
       - fd
       - gcc
+      - git-delta
       - gping
       - lazygit
       - neovim
