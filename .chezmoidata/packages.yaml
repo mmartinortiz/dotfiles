@@ -24,6 +24,8 @@ packages:
         - fish
         - git
         - build-essential
+      brew:
+        - uv
     fedora:
       dnf:
         - fish

@@ -35,6 +35,12 @@ brew {{ . | quote }}
 {{ end -}}
 EOF
 
+{{ if eq .chezmoi.osRelease.id "ubuntu" -}}
+{{ range .packages.linux.ubuntu.brew -}}
+brew {{ . | quote }}
+{{ end -}}
+{{ end -}}
+
 echo "Installing fisher and Fish plugins"
 if command -v fish 2>&1 >/dev/null
 then
