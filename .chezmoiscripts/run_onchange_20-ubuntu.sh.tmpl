@@ -1,13 +1,11 @@
 #!/bin/bash
-{{ if eq .chezmoi.os "linux" -}}
+{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "ubuntu")) -}}
 
 # APT patckages
-{{ if eq .chezmoi.osRelease.id "ubuntu" -}}
 sudo apt update
 {{ range .ubuntu.apt -}}
 echo "Installing {{ . }}"
 sudo apt install --yes {{ . | quote }}
-{{ end -}}
 {{ end -}}
 
 # Brew packages

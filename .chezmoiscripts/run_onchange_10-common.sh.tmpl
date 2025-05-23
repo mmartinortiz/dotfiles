@@ -14,7 +14,7 @@ then
 fi
 
 brew bundle --file=/dev/stdin <<EOF
-{{ range .packages.linux.brew -}}
+{{ range .common.brew -}}
 brew {{ . | quote }}
 {{ end -}}
 EOF
