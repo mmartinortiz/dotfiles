@@ -1,0 +1,19 @@
+#!/bin/bash
+{{ if eq .chezmoi.os "linux" -}}
+
+echo "Installing fonts"
+{{ range .fonts -}}
+  if [ ! -d "$HOME/.local/share/fonts/{{ . }}" ] ; then
+      wget "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/{{ . }}.zip" --directory-prefix ~/.local/share/fonts
+      unzip ~/.local/share/fonts/{{ . }}.zip -d ~/.local/share/fonts/{{ . }}/ > /dev/null
+      rm ~/.local/share/fonts/{{ . }}.zip -f
+      rm ~/.local/share/fonts/{{ . }}/*Windows* -f
+      echo "Font '{{ . }}' installed"
+      echo
+  else
+      echo "Font '{{ . }}' already installed."
+      echo
+  fi
+{{ end -}}
+
+{{ end -}}

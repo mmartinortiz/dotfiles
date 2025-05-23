@@ -1,0 +1,19 @@
+#!/bin/bash
+
+{{ if eq .chezmoi.os "linux" -}}
+
+echo "Installing fisher and Fish plugins"
+if command -v fish 2>&1 >/dev/null
+then
+
+fish <<EOF
+curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source \
+  && fisher install jorgebucaran/fisher
+{{ range .fisher -}}
+fisher install {{ . }}
+{{ end -}}
+EOF
+
+fi
+
+{{ end -}}

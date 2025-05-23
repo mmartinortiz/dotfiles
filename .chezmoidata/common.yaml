@@ -1,0 +1,20 @@
+common:
+  brew:
+    - bat
+    - bat-extras
+    - bottom
+    - devcontainer
+    - diffr
+    - dust
+    - duf
+    - eza
+    - fd
+    - gcc
+    - git-delta
+    - gping
+    - lazygit
+    - neovim
+    - procs
+    - ripgrep
+    - starship
+    - tldr
