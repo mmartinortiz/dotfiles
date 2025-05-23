@@ -1,0 +1,7 @@
+ubuntu:
+  apt:
+    - fish
+    - git
+    - build-essential
+  brew:
+    - uv

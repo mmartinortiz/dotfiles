@@ -1,0 +1,12 @@
+#!/bin/bash
+{{ if eq .chezmoi.os "linux" -}}
+
+{{ if eq .chezmoi.osRelease.id "ubuntu" -}}
+sudo apt update
+{{ range .ubuntu.apt -}}
+echo "Installing {{ . }}"
+sudo apt install --yes {{ . | quote }}
+{{ end -}}
+{{ end -}}
+
+{{ end -}}

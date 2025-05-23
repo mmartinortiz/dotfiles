@@ -13,14 +13,6 @@ sudo dnf install --yes {{ . | quote }}
 {{ end -}}
 
 
-{{ if eq .chezmoi.osRelease.id "ubuntu" -}}
-sudo apt update
-{{ range .packages.linux.ubuntu.apt -}}
-echo "Installing {{ . }}"
-sudo apt install --yes {{ . | quote }}
-{{ end -}}
-{{ end -}}
-
 if ! command -v brew 2>&1 > /dev/null
 then
   echo "Installing Brew"
@@ -36,9 +28,11 @@ brew {{ . | quote }}
 EOF
 
 {{ if eq .chezmoi.osRelease.id "ubuntu" -}}
+brew bundle --file=/dev/stdin <<EOF
 {{ range .packages.linux.ubuntu.brew -}}
 brew {{ . | quote }}
 {{ end -}}
+EOF
 {{ end -}}
 
 echo "Installing fisher and Fish plugins"
