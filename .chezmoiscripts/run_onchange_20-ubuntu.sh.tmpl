@@ -1,6 +1,7 @@
 #!/bin/bash
 {{ if eq .chezmoi.os "linux" -}}
 
+# APT patckages
 {{ if eq .chezmoi.osRelease.id "ubuntu" -}}
 sudo apt update
 {{ range .ubuntu.apt -}}
@@ -8,5 +9,12 @@ echo "Installing {{ . }}"
 sudo apt install --yes {{ . | quote }}
 {{ end -}}
 {{ end -}}
+
+# Brew packages
+brew bundle --file=/dev/stdin <<EOF
+{{ range .ubuntu.brew -}}
+brew {{ . | quote }}
+{{ end -}}
+EOF
 
 {{ end -}}

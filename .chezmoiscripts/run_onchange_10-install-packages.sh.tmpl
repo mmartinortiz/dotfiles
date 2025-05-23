@@ -27,13 +27,6 @@ brew {{ . | quote }}
 {{ end -}}
 EOF
 
-{{ if eq .chezmoi.osRelease.id "ubuntu" -}}
-brew bundle --file=/dev/stdin <<EOF
-{{ range .packages.linux.ubuntu.brew -}}
-brew {{ . | quote }}
-{{ end -}}
-EOF
-{{ end -}}
 
 echo "Installing fisher and Fish plugins"
 if command -v fish 2>&1 >/dev/null
