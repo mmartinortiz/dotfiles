@@ -1,4 +1,5 @@
 fisher:
+  - budimanjojo/tmux.fish
   - decors/fish-colored-man
   - edc/bass
   - jorgebucaran/autopair.fish
