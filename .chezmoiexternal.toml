@@ -3,3 +3,28 @@
     url = "https://github.com/tmux-plugins/tpm"
     refreshPeriod = "168h"
 
+[".tmux/plugins/tmux-battery"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-battery"
+    refreshPeriod = "168h"
+
+[".tmux/plugins/catppuccin"]
+    type = "git-repo"
+    url = "https://github.com/catppuccin/tmux"
+    refreshPeriod = "168h"
+
+[".tmux/plugins/sensible"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-sensible"
+    refreshPeriod = "168h"
+
+[".tmux/plugins/vim-tmux-navigator"]
+    type = "git-repo"
+    url = "https://github.com/christoomey/vim-tmux-navigator"
+    refreshPeriod = "168h"
+
+[".tmux/plugins/tmux-yank"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-yank"
+    refreshPeriod = "168h"
+
