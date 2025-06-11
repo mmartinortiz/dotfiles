@@ -30,6 +30,14 @@ alias vimdiff 'nvim -d'
 # variables that need to be used by other programs, like could be $LESS.
 # By default, variables are not exported.
 
+# If a variable is declared Universal, the variable is immediately available
+# to all the user's Fish instances in the machine. These variables are kept
+# under the file ~/.config/fish/fish_variables (not tracked by chezmoi)
+
+# A Global variable is available to all the functions running in the same
+# shell where they were declared, but not accessible to programs started
+# from that shell, for that the variables need to be exported.
+
 # Interactive shell initialisation
 # Customize "pure" colors and options
 set -g pure_color_current_directory brcyan
@@ -38,7 +46,10 @@ set -g pure_color_mute yellow
 set --universal pure_symbol_virtualenv_prefix "" # 🐍
 set --universal pure_color_virtualenv green
 
-fish_add_path ~/.local/bin
+if test -f ~/.local/bin
+  fish_add_path ~/.local/bin
+end
+
 if test -d ~/bin
 	fish_add_path ~/bin
 end
@@ -97,12 +108,12 @@ set -g fish_pager_color_selected_completion
 set -g fish_pager_color_selected_description
 set -g fish_pager_color_selected_prefix
 
-set --global --export SHELL /usr/bin/fish
-set --global --export EDITOR nvim
-set --global --export BATDIFF_USE_DELTA true
+set --universal --export SHELL /usr/bin/fish
+set --universal --export EDITOR nvim
+set --universal --export BATDIFF_USE_DELTA true
 
 # Ripgrep
-set --global --export RIPGREP_CONFIG_PATH ~/.config/ripgrep/ripgrep.cfg 
+set --universal --export RIPGREP_CONFIG_PATH ~/.config/ripgrep/ripgrep.cfg 
 if command -q rg
   rg --generate complete-fish > ~/.config/fish/completions/rg.fish
 end
@@ -124,5 +135,10 @@ if test -d (brew --prefix)/share/fish/vendor_completions.d
     set --prepend fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
 end
 
-tmux new-session -A -s zero
+# tmux new-session -A -s zero
+status is-interactive; and begin
+  set fish_tmux_default_session_name zero
+  set fish_tmux_autostart true
+  set fish_tmux_autoquit true
+end
 
