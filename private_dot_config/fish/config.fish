@@ -25,6 +25,11 @@ alias vi nvim
 alias vim nvim
 alias vimdiff 'nvim -d'
 
+# Variables in Fish can be "exported". It means that they will be inherited
+# by any command started by the Fish shell. Exporting is necessary for
+# variables that need to be used by other programs, like could be $LESS.
+# By default, variables are not exported.
+
 # Interactive shell initialisation
 # Customize "pure" colors and options
 set -g pure_color_current_directory brcyan
@@ -92,9 +97,15 @@ set -g fish_pager_color_selected_completion
 set -g fish_pager_color_selected_description
 set -g fish_pager_color_selected_prefix
 
-set -g SHELL /usr/bin/fish
-set -g EDITOR nvim
-set -g BATDIFF_USE_DELTA true
+set --global --export SHELL /usr/bin/fish
+set --global --export EDITOR nvim
+set --global --export BATDIFF_USE_DELTA true
+
+# Ripgrep
+set --global --export RIPGREP_CONFIG_PATH ~/.config/ripgrep/ripgrep.cfg 
+if command -q rg
+  rg --generate complete-fish > ~/.config/fish/completions/rg.fish
+end
 
 if test "$TERM" != dumb
 	/home/linuxbrew/.linuxbrew/bin/starship init fish | source
@@ -107,8 +118,11 @@ eval (batpipe)
 
 # Include completions provided by brew
 if test -d (brew --prefix)/share/fish/completions
-    set -p fish_complete_path (brew --prefix)/share/fish/completions
+    set --prepend fish_complete_path (brew --prefix)/share/fish/completions
 end
 if test -d (brew --prefix)/share/fish/vendor_completions.d
-    set -p fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
+    set --prepend fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
 end
+
+tmux new-session -A -s zero
+
