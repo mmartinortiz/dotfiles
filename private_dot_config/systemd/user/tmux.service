@@ -1,0 +1,10 @@
+[Unit]
+Description=Start tmux session named "zero" on login
+
+[Service]
+ExecStart=/var/home/manolo/.config/tmux/start_tmux.sh
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
