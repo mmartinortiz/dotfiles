@@ -1,5 +1,5 @@
 Readme.md
-{{- if ne .chezmoi.hostname "blackhole" }}
-.config/tmux/executable_start_tmux.sh
+{{- if eq .chezmoi.hostname "blackhole" }}
+.config/tmux/start_tmux.sh
 .config/systemd/user/tmux.service
 {{- end }}
