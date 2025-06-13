@@ -1,0 +1,5 @@
+#!/bin/bash
+{{- if ne .chezmoi.hostname "blackhole" }}
+systemctl --user enable tmux.service
+systemctl --user start tmux.service
+{{- end }}
