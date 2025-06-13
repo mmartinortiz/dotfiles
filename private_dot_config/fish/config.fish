@@ -137,6 +137,7 @@ end
 
 # tmux new-session -A -s zero
 status is-interactive; and begin
+  set fish_tmux_config $HOME/.config/tmux/tmux.conf
   set fish_tmux_default_session_name zero
   set fish_tmux_autostart true
   set fish_tmux_autoquit true
