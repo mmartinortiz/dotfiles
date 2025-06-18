@@ -28,3 +28,13 @@
     url = "https://github.com/tmux-plugins/tmux-yank"
     refreshPeriod = "168h"
 
+[".tmux/plugins/tmux-continuum"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-continuum"
+    refreshPeriod = "168h"
+
+[".tmux/plugins/tmux-resurrect"]
+    type = "git-repo"
+    url = "https://github.com/tmux-plugins/tmux-resurrect"
+    refreshPeriod = "168h"
+
