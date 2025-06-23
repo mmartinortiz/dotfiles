@@ -1,5 +1,6 @@
 common:
   brew:
+    - ast-grep
     - bat
     - bat-extras
     - bottom
@@ -9,9 +10,11 @@ common:
     - duf
     - eza
     - fd
+    - fzf
     - gcc
     - git-delta
     - gping
+    - imagemagick
     - lazygit
     - neovim
     - procs
