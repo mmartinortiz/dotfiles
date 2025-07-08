@@ -5,17 +5,16 @@
 echo "Hello Bluefin!"
 {{ end -}}
 
-if ! command -v brew 2>&1 > /dev/null
-then
+if ! command -v /home/linuxbrew/.linuxbrew/bin/brew 2>&1 >/dev/null; then
   echo "Installing Brew"
   NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-brew bundle --file=/dev/stdin <<EOF
+/home/linuxbrew/.linuxbrew/bin/brew bundle --file=/dev/stdin <<EOF
 {{ range .common.brew -}}
-brew {{ . | quote }}
+/home/linuxbrew/.linuxbrew/bin/brew {{ . | quote }}
 {{ end -}}
 EOF
 
