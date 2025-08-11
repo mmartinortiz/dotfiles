@@ -92,12 +92,3 @@ end
 if test -d (brew --prefix)/share/fish/vendor_completions.d
     set --prepend fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
 end
-
-if test (which tmux 2> /dev/null)
-    status is-interactive; and begin
-        set fish_tmux_config $HOME/.config/tmux/tmux.conf
-        set fish_tmux_default_session_name zero
-        set fish_tmux_autostart true
-        set fish_tmux_autoquit true
-    end
-end
