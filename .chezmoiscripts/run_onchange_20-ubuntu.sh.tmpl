@@ -9,9 +9,9 @@ sudo apt install --yes {{ . | quote }}
 {{ end -}}
 
 # Brew packages
-brew bundle --file=/dev/stdin <<EOF
+/home/linuxbrew/.linuxbrew/bin/brew bundle --file=/dev/stdin <<EOF
 {{ range .ubuntu.brew -}}
-brew {{ . | quote }}
+"/home/linuxbrew/.linuxbrew/bin/brew" {{ . | quote }}
 {{ end -}}
 EOF
 
