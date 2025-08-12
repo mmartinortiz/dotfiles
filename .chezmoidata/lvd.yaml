@@ -1,4 +1,4 @@
-ubuntu:
+lvd:
   apt:
     - fish
     - git
