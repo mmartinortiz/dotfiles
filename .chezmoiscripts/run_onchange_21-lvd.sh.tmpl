@@ -1,0 +1,18 @@
+#!/bin/bash
+{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "LVD0034")) -}}
+
+# APT patckages
+sudo apt update
+{{ range .lvd.apt -}}
+echo "Installing {{ . }}"
+sudo apt install --yes {{ . | quote }}
+{{ end -}}
+
+# Brew packages
+/home/linuxbrew/.linuxbrew/bin/brew bundle --file=/dev/stdin <<EOF
+{{ range .lvd.brew -}}
+"/home/linuxbrew/.linuxbrew/bin/brew" {{ . | quote }}
+{{ end -}}
+EOF
+
+{{ end -}}

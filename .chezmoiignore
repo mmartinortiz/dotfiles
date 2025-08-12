@@ -1,5 +1,4 @@
 Readme.md
-{{- if eq .chezmoi.hostname "blackhole" }}
-.config/tmux/start_tmux.sh
-.config/systemd/user/tmux.service
+{{- if ne .chezmoi.hostname "LVD0034" }}
+.config/fastfetch
 {{- end }}
