@@ -92,3 +92,8 @@ end
 if test -d (brew --prefix)/share/fish/vendor_completions.d
     set --prepend fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
 end
+
+{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "LVD0034")) -}}
+set --universal --export GCM_CREDENTIAL_STORE gpg
+set --universal --export GPG_TTY (tty)
+{{ end -}}
