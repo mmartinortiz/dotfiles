@@ -51,17 +51,27 @@ set -g @catppuccin_window_status_style 'rounded'
 set -g @catppuccin_window_flags "icon"
 
 run '~/.tmux/plugins/catppuccin/catppuccin.tmux'
+# load custom moudules
+source -F '#{d:current_file}/custom_modules/ctp_memory.conf'
+source -F '#{d:current_file}/custom_modules/ctp_cpu.conf'
 
 set -g status-right-length 100
 set -g status-left-length 100
 set -g status-left ""
 set -g status-right ""
+
+{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "earth")) -}}
 set -agF status-right "#{E:@catppuccin_status_battery}"
+{{ else }}
+set -agF status-right "#{E:@catppuccin_status_ctp_cpu}"
+set -agF status-right "#{E:@catppuccin_status_ctp_memory}"
+{{ end -}}
 
 set -wg automatic-rename on
 set -g allow-rename off
 
 run '~/.tmux/plugins/tmux-battery/battery.tmux'
+run '~/.tmux/plugins/tmux-cpu/cpu.tmux'
 
 # Clipboard
 set -g @yank_selection_mouse 'clipboard' # or 'primary' or 'secondary'
