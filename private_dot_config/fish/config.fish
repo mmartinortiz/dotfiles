@@ -11,7 +11,7 @@ alias grep batgrep
 alias ip 'ip --color --brief'
 alias la 'eza -a'
 alias less 'bat --paging=always'
-alias lg lazygit
+alias lg 'lazygit --use-config-file="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/themes/catppuccin/themes-mergable/mocha/yellow.yml"'
 alias ll 'eza -l'
 alias lla 'eza -la'
 alias ls eza
