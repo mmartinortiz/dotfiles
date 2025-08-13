@@ -2,13 +2,11 @@
   editor = vim
   pager = delta
 
-{{ if eq .chezmoi.os "linux" }}
-{{   if (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "LVD0034")) -}}
 [credential]
-  helper = "/mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe"
+  helper = /usr/local/bin/git-credential-manager
   useHttpPath = true
-{{   end }}
-{{ end }}
+{{ end -}}
 
 [delta]
     navigate = true  # use n and N to move between diff sections
