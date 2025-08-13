@@ -6,6 +6,8 @@ run '~/.tmux/plugins/tmux-continuum/continuum.tmux'
 run '~/.tmux/plugins/tmux-yank/yank.tmux' # https://github.com/tmux-plugins/tmux-yank
 run '~/.tmux/plugins/vim-tmux-navigator/vim-tmux-navigator.tmux' # https://github.com/christoomey/vim-tmux-navigator
 
+set-environment -gF TMUX_PLUGIN_MANAGER_PATH '#{HOME}/.tmux/plugins/'
+
 # Set default shell
 set-option -g default-shell /usr/bin/fish
 
