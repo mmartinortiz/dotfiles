@@ -4,4 +4,5 @@ ubuntu:
     - git
     - build-essential
   brew:
+    - just
     - uv
