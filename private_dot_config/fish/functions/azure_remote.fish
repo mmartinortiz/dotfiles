@@ -1,4 +1,4 @@
-function update_azure_origin_url
+function azure_remote
     # The function receives a PAT as argument, and updates the remote named "origin"
     # on the current folder to make use of the PAT for authentication.
     set -l pat $argv[1]
