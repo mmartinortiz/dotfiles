@@ -1,4 +1,5 @@
 Readme.md
 {{- if ne .chezmoi.hostname "LVD0034" }}
 .config/fastfetch
+.config/fish/functions/azure_remote.fish
 {{- end }}
