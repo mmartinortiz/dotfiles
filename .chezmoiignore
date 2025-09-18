@@ -1,7 +1,7 @@
 Readme.md
+.config/nvim/lazy-lock.json
 {{- if ne .chezmoi.hostname "LVD0034" }}
 .config/fastfetch
 .config/fish/functions/azure_remote.fish
 {{- end }}
-.config/nvim/lazy-lock.json
 
