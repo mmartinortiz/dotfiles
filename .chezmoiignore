@@ -3,3 +3,5 @@ Readme.md
 .config/fastfetch
 .config/fish/functions/azure_remote.fish
 {{- end }}
+.config/nvim/lazy-lock.json
+
