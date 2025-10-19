@@ -12,6 +12,7 @@ if ! command -v brew 2>&1 >/dev/null; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+# common.yaml hash: {{ include ".chezmoidata/common.yaml" | sha256sum }}
 /home/linuxbrew/.linuxbrew/bin/brew bundle --file=/dev/stdin <<EOF
 {{ range .common.brew -}}
 "/home/linuxbrew/.linuxbrew/bin/brew" {{ . | quote }}
