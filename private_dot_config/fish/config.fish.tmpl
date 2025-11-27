@@ -4,6 +4,10 @@ abbr --add -- gc 'git commit -m'
 abbr --add -- gp 'git push'
 abbr --add -- cm chezmoi
 
+abbr --add -- dcu 'devcontainer up --remove-existing-container --workspace-folder (pwd)'
+abbr --add -- dcb 'devcontainer build --workspace-folder (pwd)'
+abbr --add -- dce 'devcontainer exec --workspace-folder (pwd)'
+
 # Aliases
 alias cat 'bat --plain'
 alias eza 'eza --icons auto --git --hyperlink --group-directories-first --header'
