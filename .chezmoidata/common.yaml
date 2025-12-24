@@ -17,6 +17,7 @@ common:
     - imagemagick
     - lazygit
     - neovim
+    - pass
     - procs
     - ripgrep
     - starship
