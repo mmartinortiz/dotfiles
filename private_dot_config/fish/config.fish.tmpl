@@ -4,7 +4,12 @@ abbr --add -- gc 'git commit -m'
 abbr --add -- gp 'git push'
 abbr --add -- cm chezmoi
 
-abbr --add -- dcu 'devcontainer up --remove-existing-container --workspace-folder (pwd)'
+abbr --add -- dcu 'devcontainer up \
+--mount "type=bind,source=$HOME/.config/nvim,target=/home/vscode/.config/nvim" \
+--mount "type=bind,source=$HOME/.local/share/nvim,target=/home/vscode/.local/share/nvim" \
+--mount "type=bind,source=$HOME/.gitconfig,target=/home/vscode/.gitconfig" \
+--remove-existing-container \
+--workspace-folder (pwd)'
 abbr --add -- dcb 'devcontainer build --workspace-folder (pwd)'
 abbr --add -- dce 'devcontainer exec --workspace-folder (pwd)'
 
