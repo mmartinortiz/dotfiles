@@ -15,6 +15,7 @@ common:
     - git-delta
     - gping
     - imagemagick
+    - just
     - lazygit
     - neovim
     - pass

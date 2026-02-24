@@ -4,5 +4,6 @@ lvd:
     - git
     - build-essential
   brew:
+    - git-lfs
     - uv
     - fastfetch
