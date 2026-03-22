@@ -48,12 +48,6 @@ alias vimdiff 'nvim -d'
 # from that shell, for that the variables need to be exported.
 
 # Interactive shell initialisation
-# Customize "pure" colors and options
-set -g pure_color_current_directory brcyan
-set -g pure_color_mute yellow
-
-set --universal pure_symbol_virtualenv_prefix "" # 🐍
-set --universal pure_color_virtualenv green
 
 if test -f ~/.local/bin
     fish_add_path ~/.local/bin
@@ -75,13 +69,16 @@ end
 # Sponge plugin config
 set sponge_delay 5
 
-set --universal --export SHELL /usr/bin/fish
-set --universal --export EDITOR nvim
-set --universal --export BATDIFF_USE_DELTA true
-set --universal --export GPG_TTY (tty)
+if command -q nvim
+    set --global --export EDITOR nvim
+end
+
+set --global --export SHELL /usr/bin/fish
+set --global --export BATDIFF_USE_DELTA true
+set --global --export GPG_TTY (tty)
 
 # Ripgrep
-set --universal --export RIPGREP_CONFIG_PATH ~/.config/ripgrep/ripgrep.cfg
+set --global --export RIPGREP_CONFIG_PATH ~/.config/ripgrep/ripgrep.cfg
 if command -q rg
     rg --generate complete-fish >~/.config/fish/completions/rg.fish
 end
@@ -102,8 +99,6 @@ end
 if test -d (brew --prefix)/share/fish/vendor_completions.d
     set --prepend fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
 end
-
-{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "LVD0034")) -}}
-set --global --export GCM_CREDENTIAL_STORE gpg
-set --global --export GPG_TTY (tty)
-{{ end -}}
+{ { if (and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "LVD0034")) - } set --global --export GCM_CREDENTIAL_STORE gpg
+        set --global --export GPG_TTY (tty)
+        { { end - } atuin init fish | source

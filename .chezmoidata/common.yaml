@@ -1,6 +1,7 @@
 common:
   brew:
     - ast-grep
+    - atuin
     - bat
     - bat-extras
     - bottom
