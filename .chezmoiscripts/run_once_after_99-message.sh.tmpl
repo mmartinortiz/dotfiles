@@ -1,0 +1,27 @@
+#!/bin/bash
+echo ""
+echo "=========================================="
+echo "  Dotfiles applied successfully!"
+echo "=========================================="
+echo ""
+echo "Next steps:"
+echo ""
+echo "  1. Install brew packages:"
+echo "     brew bundle --global"
+echo ""
+echo "  2. Install fish plugins:"
+echo "     fisher update"
+echo ""
+{{ if eq .env_type "full" -}}
+echo "  3. Install Nerd Fonts (Hack and Ubuntu):"
+echo "     Download from https://www.nerdfonts.com/font-downloads"
+echo "     Extract to ~/.local/share/fonts/"
+echo "     Run: fc-cache -fv"
+echo ""
+echo "  Or use the sync alias after restarting your shell:"
+echo "     dotfiles-sync"
+{{ else -}}
+echo "  Or use the sync alias after restarting your shell:"
+echo "     dotfiles-sync"
+{{ end -}}
+echo ""

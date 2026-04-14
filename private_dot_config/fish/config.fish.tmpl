@@ -4,6 +4,7 @@ abbr --add -- gc 'git commit -m'
 abbr --add -- gp 'git push'
 abbr --add -- cm chezmoi
 
+{{ if eq .env_type "full" -}}
 abbr --add -- dcu 'devcontainer up \
 --mount "type=bind,source=$HOME/.config/nvim,target=/home/vscode/.config/nvim" \
 --mount "type=bind,source=$HOME/.local/share/nvim,target=/home/vscode/.local/share/nvim" \
@@ -12,6 +13,7 @@ abbr --add -- dcu 'devcontainer up \
 --workspace-folder (pwd)'
 abbr --add -- dcb 'devcontainer build --workspace-folder (pwd)'
 abbr --add -- dce 'devcontainer exec --workspace-folder (pwd)'
+{{ end -}}
 
 # Aliases
 alias cat 'bat --plain'
@@ -33,6 +35,7 @@ alias v nvim
 alias vi nvim
 alias vim nvim
 alias vimdiff 'nvim -d'
+alias dotfiles-sync 'chezmoi apply && brew bundle --global && fisher update'
 
 # Variables in Fish can be "exported". It means that they will be inherited
 # by any command started by the Fish shell. Exporting is necessary for

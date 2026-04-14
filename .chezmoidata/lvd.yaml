@@ -1,9 +1,0 @@
-lvd:
-  apt:
-    - fish
-    - git
-    - build-essential
-  brew:
-    - git-lfs
-    - uv
-    - fastfetch

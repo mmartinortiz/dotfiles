@@ -1,6 +1,17 @@
-{{ $email := promptStringOnce . "email" "Email address" }}
-{{ $name := promptStringOnce . "name" "Name" }}
+{{ $email := env "CHEZMOI_GIT_EMAIL" }}
+{{ if not $email }}
+{{   $email = promptStringOnce . "email" "Email address for Git commits" }}
+{{ end }}
+{{ $name := env "CHEZMOI_GIT_NAME" }}
+{{ if not $name }}
+{{   $name = promptStringOnce . "name" "Name for Git commits" }}
+{{ end }}
+{{ $env_type := env "CHEZMOI_ENV_TYPE" }}
+{{ if not $env_type }}
+{{   $env_type = promptStringOnce . "env_type" "Environment type (full/devcontainer)" }}
+{{ end }}
 
 [data]
     email = {{ $email | quote }}
     name = {{ $name | quote }}
+    env_type = {{ $env_type | quote }}

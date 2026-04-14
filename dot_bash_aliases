@@ -1,0 +1,1 @@
+alias dotfiles-sync='chezmoi apply && brew bundle --global && fisher update'

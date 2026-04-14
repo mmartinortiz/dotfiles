@@ -1,0 +1,39 @@
+# Common tools (all environments)
+brew "ast-grep"
+brew "bat"
+brew "bat-extras"
+brew "diffr"
+brew "eza"
+brew "fd"
+brew "fzf"
+brew "git-delta"
+brew "lazygit"
+brew "neovim"
+brew "ripgrep"
+brew "tree-sitter-cli"
+
+{{ if eq .env_type "full" -}}
+# Desktop-only tools
+brew "atuin"
+brew "bottom"
+brew "devcontainer"
+brew "dust"
+brew "duf"
+brew "fisher"
+brew "gcc"
+brew "gping"
+brew "just"
+brew "imagemagick"
+brew "pass"
+brew "procs"
+brew "starship"
+brew "tldr"
+brew "tokuhirom/tap/dcv"
+brew "uv"
+{{ end -}}
+
+{{ if and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "LVD0034") -}}
+# LVD
+brew "fastfetch"
+brew "git-lfs"
+{{ end -}}

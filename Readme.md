@@ -1,21 +1,90 @@
 # Dotfiles
 
-Managed with `chezmoi`. Installing `chezmoi` and the dotfiles on a new machines with a single command:
+Configuration files managed with [chezmoi](https://www.chezmoi.io/). Supports two environment types: **full** (desktop with tmux, fonts, etc.) and **devcontainer** (neovim + CLI tools only).
 
+## Prerequisites
 
 ```bash
-# bash
+sudo apt install fish git build-essential
+```
+
+## Installation
+
+```bash
+# Install chezmoi and apply dotfiles
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply mmartinortiz
 ```
 
-```fish
-# fish
-curl -fsLS get.chezmoi.io | sh -s -- init --apply mmartinortiz
+During init, you will be prompted for:
+- **Email** and **Name** (for git config)
+- **Environment type**: `full` or `devcontainer`
+
+## Post-install
+
+Install brew packages and fish plugins:
+
+```bash
+brew bundle --global
+fisher update
 ```
 
-[Reference](https://www.chezmoi.io/user-guide/daily-operations/#automatically-commit-and-push-changes-to-your-repo)
+Or after restarting your shell, use the alias:
 
-`tmux` and `fish`  are installed but not set as default starting point. It is up to the user to call either `fish` or `tmux` via the profile on the term emulator or the SSH command.
+```bash
+dotfiles-sync
+```
+
+This runs `chezmoi apply`, `brew bundle --global`, and `fisher update` in sequence.
+
+## Fonts (full environment only)
+
+Download and install [Nerd Fonts](https://www.nerdfonts.com/font-downloads):
+- **Hack**
+- **Ubuntu**
+
+```bash
+mkdir -p ~/.local/share/fonts
+# For each font:
+wget "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/<FontName>.zip" -P ~/.local/share/fonts
+unzip ~/.local/share/fonts/<FontName>.zip -d ~/.local/share/fonts/<FontName>/
+fc-cache -fv
+```
+
+## Devcontainer usage
+
+For convinience, the variables `CHEZMOI_GIT_EMAIL` and `CHEZMOI_GIT_NAME` can be defined on your system to provide Git with an Email and Name for the `.gitconfig`. For setting up the container, create a `setup.sh` script accessible by the devcontainer with the following content:
+
+```bash
+#!/bin/bash 
+set -e 
+
+# Fix brew permissions
+sudo chown -R "$(whoami)" /home/linuxbrew/.linuxbrew
+
+# Dotfiles
+chezmoi init --apply https://github.com/mmartinortiz/dotfiles 
+
+# Install the brew packates 
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+brew bundle --global
+```
+
+Add the following to your `.devcontainer.json`
+
+```json
+{
+  "containerEnv": {
+      "CHEZMOI_ENV_TYPE": "devcontainer",
+      "CHEZMOI_GIT_EMAIL": "${localEnv:CHEZMOI_GIT_EMAIL",
+      "CHEZMOI_GIT_NAME": "${localEnv:CHEZMOI_GIT_NAME}"
+  },
+  "postCreateCommand": ".devcontainer/setup.sh"
+}
+```
+
+## tmux (full environment only)
+
+`tmux` and `fish` are not set as default shell. Call either via the terminal emulator profile or SSH command.
 
 Start `tmux` or join an existing session:
 
@@ -23,10 +92,12 @@ Start `tmux` or join an existing session:
 tmux new-session -A
 ```
 
+Reload `tmux` plugins with `Prefix + I`.
+
 ## Links
 
+- [chezmoi daily operations](https://www.chezmoi.io/user-guide/daily-operations/)
 - [Tmux, getting started](https://github.com/tmux/tmux/wiki/Getting-Started)
 - [Awesome Tmux](https://github.com/rothgar/awesome-tmux)
-
-Reload `tmux` plugins with `Prefix + I`.
+- [Nerd Fonts](https://www.nerdfonts.com/)
 
