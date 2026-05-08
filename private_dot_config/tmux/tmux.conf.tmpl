@@ -84,5 +84,9 @@ set-option -sg escape-time 10
 set-option -g focus-events on
 set-option -a terminal-features 'xterm-256color:RGB'
 
+# Allow passthrough of escape sequences to the outer terminal
+# Required for Fish shell dynamic theme detection (OSC 11 queries)
+set-option -g allow-passthrough on
+
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 run '~/.tmux/plugins/tpm/tpm'
