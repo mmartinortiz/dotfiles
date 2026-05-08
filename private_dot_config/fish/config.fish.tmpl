@@ -22,7 +22,6 @@ alias grep batgrep
 alias ip 'ip --color --brief'
 alias la 'eza -a'
 alias less 'bat --paging=always'
-alias lg 'lazygit --use-config-file="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/themes/catppuccin/themes-mergable/mocha/yellow.yml"'
 alias ll 'eza -l'
 alias lla 'eza -la'
 alias ls eza
@@ -109,3 +108,29 @@ set --global --export GPG_TTY (tty)
 {{ end -}}
 
 atuin init fish --disable-up-arrow | source
+
+# Theme configuration - uses Catppuccin with automatic light/dark switching
+# Fish 4.3+ will automatically switch between Mocha (dark) and Latte (light)
+# based on the terminal's color scheme via $fish_terminal_color_theme
+fish_config theme choose catppuccin-mocha
+
+# Dynamic theme support for tools (bat, lazygit)
+# This function updates tool themes when terminal color scheme changes
+function __update_tool_themes --on-variable fish_terminal_color_theme
+    if test "$fish_terminal_color_theme" = light
+        set -gx BAT_THEME "Catppuccin Latte"
+        alias lg 'lazygit --use-config-file="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/themes/catppuccin/themes-mergable/latte/yellow.yml"'
+    else
+        set -gx BAT_THEME "Catppuccin Mocha"
+        alias lg 'lazygit --use-config-file="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/themes/catppuccin/themes-mergable/mocha/yellow.yml"'
+    end
+end
+
+# Initialize tool themes on startup
+if test "$fish_terminal_color_theme" = light
+    set -gx BAT_THEME "Catppuccin Latte"
+    alias lg 'lazygit --use-config-file="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/themes/catppuccin/themes-mergable/latte/yellow.yml"'
+else
+    set -gx BAT_THEME "Catppuccin Mocha"
+    alias lg 'lazygit --use-config-file="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/themes/catppuccin/themes-mergable/mocha/yellow.yml"'
+end
