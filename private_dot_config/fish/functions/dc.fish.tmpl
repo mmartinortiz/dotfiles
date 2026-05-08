@@ -10,8 +10,11 @@ function dc --description "devcontainer wrapper"
     if test -d $HOME/.claude
         set -a mounts --mount "type=bind,source=$HOME/.claude,target=/home/vscode/.claude"
     end
-    if test -d $HOME/.opencode
-        set -a mounts --mount "type=bind,source=$HOME/.opencode,target=/home/vscode/.opencode"
+    if test -d $HOME/.local/share/opencode
+        set -a mounts --mount "type=bind,source=$HOME/.local/share/opencode,target=/home/vscode/.local/share/opencode"
+    end
+    if test -d $HOME/.agents
+        set -a mounts --mount "type=bind,source=$HOME/.agents,target=/home/vscode/.agents"
     end
     
     switch $argv[1]
