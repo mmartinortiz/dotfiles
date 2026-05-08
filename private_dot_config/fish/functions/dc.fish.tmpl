@@ -1,0 +1,57 @@
+{{ if eq .env_type "full" -}}
+function dc --description "devcontainer wrapper"
+    set -l workspace (pwd)
+    set -l mounts \
+        --mount "type=bind,source=$HOME/.config/nvim,target=/home/vscode/.config/nvim" \
+        --mount "type=bind,source=$HOME/.local/share/nvim,target=/home/vscode/.local/share/nvim" \
+        --mount "type=bind,source=$HOME/.gitconfig,target=/home/vscode/.gitconfig" \
+        --mount "type=bind,source=$HOME/.config/opencode,target=/home/vscode/.config/opencode"
+    
+    if test -d $HOME/.claude
+        set -a mounts --mount "type=bind,source=$HOME/.claude,target=/home/vscode/.claude"
+    end
+    if test -d $HOME/.opencode
+        set -a mounts --mount "type=bind,source=$HOME/.opencode,target=/home/vscode/.opencode"
+    end
+    
+    switch $argv[1]
+        case -h --help ''
+            echo "dc - devcontainer wrapper"
+            echo ""
+            echo "Usage: dc <command> [args]"
+            echo ""
+            echo "Commands:"
+            echo "  up, u      Start container (remove existing)"
+            echo "  upf, uf    Start fast (skip post-create)"
+            echo "  build, b   Build image"
+            echo "  exec, e    Run command in container"
+            echo "  sh         Interactive bash shell"
+            echo "  fish       Interactive fish shell"
+            echo "  stop, s    Stop container"
+            echo "  down, d    Stop and delete container"
+            echo ""
+            echo "Examples:"
+            echo "  dc up"
+            echo "  dc exec cargo build"
+            echo "  dc sh"
+        case up u
+            devcontainer up $mounts --remove-existing-container --workspace-folder $workspace
+        case upf uf
+            devcontainer up $mounts --skip-post-create --workspace-folder $workspace
+        case build b
+            devcontainer build --workspace-folder $workspace
+        case exec e
+            devcontainer exec --workspace-folder $workspace $argv[2..-1]
+        case sh
+            devcontainer exec --workspace-folder $workspace bash
+        case fish
+            devcontainer exec --workspace-folder $workspace fish
+        case stop s
+            devcontainer stop --workspace-folder $workspace
+        case down d
+            devcontainer down --workspace-folder $workspace
+        case '*'
+            devcontainer $argv
+    end
+end
+{{ end -}}

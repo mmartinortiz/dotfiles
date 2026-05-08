@@ -3,74 +3,27 @@ abbr --add -- ga 'git add'
 abbr --add -- gc 'git commit -m'
 abbr --add -- gp 'git push'
 abbr --add -- cm chezmoi
+abbr --add -- ip 'ip --color --brief'
+abbr --add -- la 'eza -a'
+abbr --add -- ll 'eza -l'
+abbr --add -- lla 'eza -la'
+abbr --add -- ls eza
+abbr --add -- lt 'eza --tree'
+abbr --add -- lta 'eza --tree --all'
+abbr --add -- tree 'eza --tree --group-directories-first'
+abbr --add -- v nvim
+abbr --add -- vi nvim
+abbr --add -- vim nvim
+abbr --add -- vimdiff 'nvim -d'
+abbr --add -- dotfiles-sync 'chezmoi apply && brew bundle --global && fisher update'
 
-{{ if eq .env_type "full" -}}
-function dc --description "devcontainer wrapper"
-    set -l workspace (pwd)
-    set -l mounts \
-        --mount "type=bind,source=$HOME/.config/nvim,target=/home/vscode/.config/nvim" \
-        --mount "type=bind,source=$HOME/.local/share/nvim,target=/home/vscode/.local/share/nvim" \
-        --mount "type=bind,source=$HOME/.gitconfig,target=/home/vscode/.gitconfig"
-    
-    switch $argv[1]
-        case -h --help ''
-            echo "dc - devcontainer wrapper"
-            echo ""
-            echo "Usage: dc <command> [args]"
-            echo ""
-            echo "Commands:"
-            echo "  up, u      Start container (remove existing)"
-            echo "  upf, uf    Start fast (skip post-create)"
-            echo "  build, b   Build image"
-            echo "  exec, e    Run command in container"
-            echo "  sh         Interactive bash shell"
-            echo "  stop, s    Stop container"
-            echo "  down, d    Stop and delete container"
-            echo ""
-            echo "Examples:"
-            echo "  dc up"
-            echo "  dc exec cargo build"
-            echo "  dc sh"
-        case up u
-            devcontainer up $mounts --remove-existing-container --workspace-folder $workspace
-        case upf uf
-            devcontainer up $mounts --skip-post-create --workspace-folder $workspace
-        case build b
-            devcontainer build --workspace-folder $workspace
-        case exec e
-            devcontainer exec --workspace-folder $workspace $argv[2..-1]
-        case sh
-            devcontainer exec --workspace-folder $workspace bash
-        case stop s
-            devcontainer stop --workspace-folder $workspace
-        case down d
-            devcontainer down --workspace-folder $workspace
-        case '*'
-            devcontainer $argv
-    end
-end
-{{ end -}}
-
-# Aliases
+# Aliases (command replacements)
 alias cat 'bat --plain'
 alias eza 'eza --icons auto --git --hyperlink --group-directories-first --header'
 alias grep batgrep
-alias ip 'ip --color --brief'
-alias la 'eza -a'
 alias less 'bat --paging=always'
-alias ll 'eza -l'
-alias lla 'eza -la'
-alias ls eza
-alias lt 'eza --tree'
-alias lta 'eza --tree --all'
 alias man batman
 alias more 'bat --paging=always'
-alias tree 'exa --tree --group-directories-first'
-alias v nvim
-alias vi nvim
-alias vim nvim
-alias vimdiff 'nvim -d'
-alias dotfiles-sync 'chezmoi apply && brew bundle --global && fisher update'
 
 # Variables in Fish can be "exported". It means that they will be inherited
 # by any command started by the Fish shell. Exporting is necessary for
@@ -248,11 +201,3 @@ end
 set -gx BAT_THEME "Catppuccin Mocha"
 set -gx DELTA_FEATURES "+catppuccin-mocha"
 
-# Lazygit uses a function to pick the right theme dynamically
-function lg --wraps=lazygit --description "lazygit with dynamic Catppuccin theme"
-    if test "$fish_terminal_color_theme" = light
-        command lazygit --use-config-file="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/themes/catppuccin/themes-mergable/latte/yellow.yml" $argv
-    else
-        command lazygit --use-config-file="$HOME/.config/lazygit/config.yml,$HOME/.config/lazygit/themes/catppuccin/themes-mergable/mocha/yellow.yml" $argv
-    end
-end
