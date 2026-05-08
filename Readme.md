@@ -82,6 +82,18 @@ Add the following to your `.devcontainer.json`
 }
 ```
 
+## Fish Theme (Fish 4.3+)
+
+The Fish shell configuration uses **Catppuccin** with automatic light/dark theme switching. Fish will automatically switch between Mocha (dark) and Latte (light) based on your terminal's color scheme.
+
+If upgrading from an older Fish version, remove the frozen theme file to enable dynamic switching:
+
+```bash
+rm -f ~/.config/fish/conf.d/fish_frozen_theme.fish
+```
+
+Tools like `bat` and `lazygit` also switch themes automatically via the `update_theme` function.
+
 ## tmux (full environment only)
 
 `tmux` and `fish` are not set as default shell. Call either via the terminal emulator profile or SSH command.
