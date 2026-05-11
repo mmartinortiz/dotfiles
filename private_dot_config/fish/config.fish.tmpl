@@ -11,13 +11,13 @@ abbr --add -- ls eza
 abbr --add -- lt 'eza --tree'
 abbr --add -- lta 'eza --tree --all'
 abbr --add -- tree 'eza --tree --group-directories-first'
-abbr --add -- v nvim
-abbr --add -- vi nvim
-abbr --add -- vim nvim
+abbr --add -- v vim
 abbr --add -- vimdiff 'nvim -d'
 abbr --add -- dotfiles-sync 'chezmoi apply && brew bundle --global && fisher update'
 
 # Aliases (command replacements)
+alias vim nvim
+alias vi vim
 alias cat 'bat --plain'
 alias eza 'eza --icons auto --git --hyperlink --group-directories-first --header'
 alias grep batgrep
@@ -60,8 +60,9 @@ end
 # Sponge plugin config
 set sponge_delay 5
 
-if command -q nvim
-    set --global --export EDITOR nvim
+if command -q vim
+    set --global --export EDITOR vim
+    set --global --export GIT_EDITOR vim
 end
 
 set --global --export SHELL /usr/bin/fish
