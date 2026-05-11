@@ -93,7 +93,7 @@ run '~/.tmux/plugins/tmux-cpu/cpu.tmux'
 set -g @yank_selection_mouse 'clipboard' # or 'primary' or 'secondary'
 
 # Wayland clipboard integration - paste with prefix + v
-bind-key v run-shell "wl-paste --no-newline | tmux load-buffer - && tmux paste-buffer"
+bind-key v run-shell "wl-paste --no-newline | tmux load-buffer - && tmux paste-buffer -p"
 
 set-option -sg escape-time 10
 set-option -g focus-events on
