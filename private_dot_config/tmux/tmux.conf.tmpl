@@ -34,8 +34,8 @@ bind-key C-a send-prefix
 set -g status-position "top"
 
 # More intuitive vertical and horizontal splits
-bind v split-window -v -c "#{pane_current_path}"
-bind h split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+bind | split-window -h -c "#{pane_current_path}"
 unbind '"'
 unbind %
 
