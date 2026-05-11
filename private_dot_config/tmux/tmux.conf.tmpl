@@ -1,10 +1,20 @@
-# List of plugins https://github.com/tmux-plugins/list?tab=readme-ov-file
+# Plugin manager - install with prefix+I, update with prefix+U
 set -g @plugin 'tmux-plugins/tpm'
-run '~/.tmux/plugins/tmux-sensible/sensible.tmux'
+
+# Better defaults: larger history, faster key repeat, emacs keys in status
+run '~/.tmux/plugins/sensible/sensible.tmux'
+
+# Save/restore sessions across restarts
 run '~/.tmux/plugins/tmux-resurrect/resurrect.tmux'
+
+# Auto-save sessions every 5 min, auto-restore on tmux start
 run '~/.tmux/plugins/tmux-continuum/continuum.tmux'
-run '~/.tmux/plugins/tmux-yank/yank.tmux' # https://github.com/tmux-plugins/tmux-yank
-run '~/.tmux/plugins/vim-tmux-navigator/vim-tmux-navigator.tmux' # https://github.com/christoomey/vim-tmux-navigator
+
+# Copy to system clipboard
+run '~/.tmux/plugins/tmux-yank/yank.tmux'
+
+# Seamless navigation between tmux panes and vim splits
+run '~/.tmux/plugins/vim-tmux-navigator/vim-tmux-navigator.tmux'
 
 set-environment -gF TMUX_PLUGIN_MANAGER_PATH '#{HOME}/.tmux/plugins'
 
@@ -81,6 +91,9 @@ run '~/.tmux/plugins/tmux-cpu/cpu.tmux'
 
 # Clipboard
 set -g @yank_selection_mouse 'clipboard' # or 'primary' or 'secondary'
+
+# Wayland clipboard integration - paste with prefix + v
+bind-key v run-shell "wl-paste --no-newline | tmux load-buffer - && tmux paste-buffer"
 
 set-option -sg escape-time 10
 set-option -g focus-events on
