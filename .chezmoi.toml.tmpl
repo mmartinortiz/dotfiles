@@ -10,8 +10,10 @@
 {{ if not $env_type }}
 {{   $env_type = promptStringOnce . "env_type" "Environment type (full/devcontainer)" }}
 {{ end }}
+{{ $virt_type := output "systemd-detect-virt" | trim }}
 
 [data]
     email = {{ $email | quote }}
     name = {{ $name | quote }}
     env_type = {{ $env_type | quote }}
+    virt_type = {{ $virt_type | quote }}

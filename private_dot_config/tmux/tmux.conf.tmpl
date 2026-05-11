@@ -74,7 +74,9 @@ set -agF status-right "#{E:@catppuccin_status_ctp_memory}"
 set -wg automatic-rename on
 set -g allow-rename off
 
+{{ if eq .virt_type "none" -}}
 run '~/.tmux/plugins/tmux-battery/battery.tmux'
+{{ end -}}
 run '~/.tmux/plugins/tmux-cpu/cpu.tmux'
 
 # Clipboard
