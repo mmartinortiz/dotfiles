@@ -97,7 +97,9 @@ bind-key v run-shell "wl-paste --no-newline | tmux load-buffer - && tmux paste-b
 
 set-option -sg escape-time 10
 set-option -g focus-events on
+set-option -g default-terminal "tmux-256color"
 set-option -a terminal-features 'xterm-256color:RGB'
+set-option -ga update-environment "COLORTERM"
 
 # Allow passthrough of escape sequences to the outer terminal
 # Required for Fish shell dynamic theme detection (OSC 11 queries)
