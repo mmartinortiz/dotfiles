@@ -61,7 +61,7 @@ function claude_container --description "Run claude code in container with curre
         --volume "$config_dir":/home/node/.claude:ro \
         --volume "$sessions_dir":/home/node/.claude/sessions \
         --volume "$backups_dir":/home/node/.claude/backups \
-        --volume "$history_file":/home/node/.claude/hisotory.jsonl \
+        --volume "$history_file":/home/node/.claude/history.jsonl \
         --volume "$projects_dir":/home/node/.claude/projects \
         --volume "$config_file":/home/node/.claude.json \
         --volume "$skills_dir":/home/node/.agents/skills:ro \
