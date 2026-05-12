@@ -1,31 +1,45 @@
-function _get_node_lts_version --description "Get latest Node LTS version, default to 24 if offline"
-    set -l lts_version (curl -s --connect-timeout 2 https://nodejs.org/dist/index.json | jq -r '[.[] | select(.lts != false)] | .[0].version | ltrimstr("v") | split(".")[0]' 2>/dev/null)
-    if test -z "$lts_version"
-        echo 24
+function _get_stable_node_lts --description "Get Node LTS version at least 7 days old, default to 24 if offline"
+    set -l cutoff (date -d '7 days ago' +%Y-%m-%d)
+    
+    # Get version and date at least 7 days old
+    set -l result (curl -s --connect-timeout 2 https://nodejs.org/dist/index.json | jq -r --arg cutoff "$cutoff" '
+        [.[] | select(.lts != false and .date <= $cutoff)] | .[0] | "\(.version)|\(.date)"
+    ' 2>/dev/null)
+    
+    if test -z "$result"
+        echo "v24|"
     else
-        echo "$lts_version"
+        echo "$result"
     end
 end
 
 function claude_container --description "Run claude code in container with current directory only"
-    # Escape argv properly
-    set -l escaped_args (string escape -- $args)
-
     set -l magenta (set_color magenta)
     set -l cyan (set_color cyan)
     set -l yellow (set_color yellow)
     set -l dim (set_color brblack)
     set -l reset (set_color normal)
-
+    
     set -l config_dir "$HOME/.claude"
+    set -l projects_dir "$HOME/.claude/projects"
     set -l config_file "$HOME/.claude.json"
     set -l skills_dir "$HOME/.agents/skills"
-    set -l node_version (_get_node_lts_version)
-
-    echo "$magenta󰧑$reset $yellow →$reset $cyan󰡨$reset Running claude in container based on $dim(Node $node_version)$reset"
-
+    
+    set -l node_info (string split '|' (_get_stable_node_lts))
+    set -l node_version $node_info[1]
+    set -l node_date $node_info[2]
+    
+    # Strip 'v' prefix for docker tag
+    set -l node_tag (string replace 'v' '' $node_version)
+    
+    # Escape argv for sh -c
+    set -l escaped_args (string escape -- $argv)
+    
+    echo "$magenta󰧑$reset $yellow→$reset $cyan󰡨$reset Running claude in container $dim(Node $node_version, $node_date)$reset"
+    
     # Ensure dirs/files exist (avoid mount failure)
     test -d "$config_dir"; or mkdir -p "$config_dir"
+    test -d "$projects_dir"; or mkdir -p "$projects_dir"
     test -f "$config_file"; or touch "$config_file"
     test -d "$skills_dir"; or mkdir -p "$skills_dir"
 
@@ -39,9 +53,10 @@ function claude_container --description "Run claude code in container with curre
         --env PATH=/tmp/.npm-global/bin:/usr/local/bin:/usr/bin:/bin \
         --volume (pwd):/workspace \
         --volume "$config_dir":/home/node/.claude:ro \
+        --volume "$projects_dir":/home/node/.claude/projects \
         --volume "$config_file":/home/node/.claude.json:ro \
         --volume "$skills_dir":/home/node/.agents/skills:ro \
         --workdir /workspace \
-        node:$node_version-slim \
+        node:$node_tag-slim \
         sh -c "npm install -g @anthropic-ai/claude-code && claude $escaped_args"
 end
