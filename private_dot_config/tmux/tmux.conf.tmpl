@@ -71,7 +71,7 @@ source -F '#{d:current_file}/custom_modules/ctp_cpu.conf'
 
 set -g status-right-length 100
 set -g status-left-length 100
-set -g status-left ""
+set -g status-left "#{?client_prefix,#[bg=red] PREFIX #[default],}"
 set -g status-right ""
 
 {{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "earth")) -}}
