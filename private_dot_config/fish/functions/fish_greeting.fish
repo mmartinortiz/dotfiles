@@ -1,5 +1,5 @@
 function fish_greeting
     if command --query fortune
-        fortune --short
+        fortune -s
     end
 end
