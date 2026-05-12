@@ -21,11 +21,8 @@ function claude_container --description "Run claude code in container with curre
     set -l reset (set_color normal)
 
     set -l config_dir "$HOME/.claude"
-    set -l sessions_dir "$HOME/.claude/sessions"
-    set -l sessions_env_dir "$HOME/.claude/sessions-env"
-    set -l backups_dir "$HOME/.claude/backups"
-    set -l history_file "$HOME/.claude/history.jsonl"
-    set -l projects_dir "$HOME/.claude/projects"
+    set -l settings_file "$config_dir/settings.json"
+    set -l claude_md_file "$config_dir/CLAUDE.md"
     set -l config_file "$HOME/.claude.json"
     set -l skills_dir "$HOME/.agents/skills"
 
@@ -43,11 +40,8 @@ function claude_container --description "Run claude code in container with curre
 
     # Ensure dirs/files exist (avoid mount failure)
     test -d "$config_dir"; or mkdir -p "$config_dir"
-    test -d "$sessions_dir"; or mkdir -p "$sessions_dir"
-    test -d "$sessions_env_dir"; or mkdir -p "$sessions_env_dir"
-    test -d "$backups_dir"; or mkdir -p "$backups_dir"
-    test -d "$history_file"; or touch "$history_file"
-    test -d "$projects_dir"; or mkdir -p "$projects_dir"
+    test -f "$settings_file"; or touch "$settings_file"
+    test -f "$claude_md_file"; or touch "$claude_md_file"
     test -f "$config_file"; or touch "$config_file"
     test -d "$skills_dir"; or mkdir -p "$skills_dir"
 
@@ -60,12 +54,9 @@ function claude_container --description "Run claude code in container with curre
         --env NPM_CONFIG_CACHE=/tmp/.npm-cache \
         --env PATH=/tmp/.npm-global/bin:/usr/local/bin:/usr/bin:/bin \
         --volume (pwd):/workspace \
-        --volume "$config_dir":/home/node/.claude:ro \
-        --volume "$sessions_dir":/home/node/.claude/sessions \
-        --volume "$sessions_env_dir":/home/node/.claude/sessions-env \
-        --volume "$backups_dir":/home/node/.claude/backups \
-        --volume "$history_file":/home/node/.claude/history.jsonl \
-        --volume "$projects_dir":/home/node/.claude/projects \
+        --volume "$config_dir":/home/node/.claude \
+        --volume "$settings_file":/home/node/.claude/settings.json:ro \
+        --volume "$claude_md_file":/home/node/.claude/CLAUDE.md:ro \
         --volume "$config_file":/home/node/.claude.json \
         --volume "$skills_dir":/home/node/.agents/skills:ro \
         --workdir /workspace \
