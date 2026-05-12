@@ -22,6 +22,7 @@ function claude_container --description "Run claude code in container with curre
 
     set -l config_dir "$HOME/.claude"
     set -l sessions_dir "$HOME/.claude/sessions"
+    set -l sessions_env_dir "$HOME/.claude/sessions-env"
     set -l backups_dir "$HOME/.claude/backups"
     set -l history_file "$HOME/.claude/history.jsonl"
     set -l projects_dir "$HOME/.claude/projects"
@@ -43,6 +44,7 @@ function claude_container --description "Run claude code in container with curre
     # Ensure dirs/files exist (avoid mount failure)
     test -d "$config_dir"; or mkdir -p "$config_dir"
     test -d "$sessions_dir"; or mkdir -p "$sessions_dir"
+    test -d "$sessions_env_dir"; or mkdir -p "$sessions_env_dir"
     test -d "$backups_dir"; or mkdir -p "$backups_dir"
     test -d "$history_file"; or touch "$history_file"
     test -d "$projects_dir"; or mkdir -p "$projects_dir"
@@ -60,6 +62,7 @@ function claude_container --description "Run claude code in container with curre
         --volume (pwd):/workspace \
         --volume "$config_dir":/home/node/.claude:ro \
         --volume "$sessions_dir":/home/node/.claude/sessions \
+        --volume "$sessions_env_dir":/home/node/.claude/sessions-env \
         --volume "$backups_dir":/home/node/.claude/backups \
         --volume "$history_file":/home/node/.claude/history.jsonl \
         --volume "$projects_dir":/home/node/.claude/projects \
