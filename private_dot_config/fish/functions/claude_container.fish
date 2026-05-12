@@ -8,6 +8,9 @@ function _get_node_lts_version --description "Get latest Node LTS version, defau
 end
 
 function claude_container --description "Run claude code in container with current directory only"
+    # Escape argv properly
+    set -l escaped_args (string escape -- $args)
+
     set -l magenta (set_color magenta)
     set -l cyan (set_color cyan)
     set -l yellow (set_color yellow)
@@ -28,14 +31,17 @@ function claude_container --description "Run claude code in container with curre
 
     docker run --rm --interactive --tty \
         --user (id -u):(id -g) \
+        --cap-drop ALL \
+        --security-opt no-new-privileges \
         --env HOME=/home/node \
-        --env NPM_CONFIG_PREFIX=/home/node/.npm-global \
-        --env PATH=/home/node/.npm-global/bin:/usr/local/bin:/usr/bin:/bin \
+        --env NPM_CONFIG_PREFIX=/tmp/.npm-global \
+        --env NPM_CONFIG_CACHE=/tmp/.npm-cache \
+        --env PATH=/tmp/.npm-global/bin:/usr/local/bin:/usr/bin:/bin \
         --volume (pwd):/workspace \
-        --volume "$config_dir":/home/node/.claude \
-        --volume "$config_file":/home/node/.claude.json \
-        --volume "$skills_dir":/home/node/.agents/skills \
+        --volume "$config_dir":/home/node/.claude:ro \
+        --volume "$config_file":/home/node/.claude.json:ro \
+        --volume "$skills_dir":/home/node/.agents/skills:ro \
         --workdir /workspace \
         node:$node_version-slim \
-        sh -c "npm install -g @anthropic-ai/claude-code && claude $argv"
+        sh -c "npm install -g @anthropic-ai/claude-code && claude $escaped_args"
 end
