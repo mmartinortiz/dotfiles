@@ -74,17 +74,16 @@ set -g status-left-length 100
 set -g status-left "#{?client_prefix,#[bg=red] PREFIX #[default],}"
 set -g status-right ""
 
-{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "earth")) -}}
-set -agF status-right "#{E:@catppuccin_status_battery}"
-{{ else }}
 set -agF status-right "#{E:@catppuccin_status_ctp_cpu}"
 set -agF status-right "#{E:@catppuccin_status_ctp_memory}"
+{{ if .has_battery -}}
+set -agF status-right "#{E:@catppuccin_status_battery}"
 {{ end -}}
 
 set -wg automatic-rename on
 set -g allow-rename off
 
-{{ if eq .virt_type "none" -}}
+{{ if .has_battery -}}
 run '~/.tmux/plugins/tmux-battery/battery.tmux'
 {{ end -}}
 run '~/.tmux/plugins/tmux-cpu/cpu.tmux'
