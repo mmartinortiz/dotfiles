@@ -1,3 +1,3 @@
 function gitignore
-    curl -sL https://www.gitignore.io/api/$argv
+    curl --silent --location https://www.gitignore.io/api/$argv
 end

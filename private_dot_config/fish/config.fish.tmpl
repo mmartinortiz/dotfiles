@@ -4,9 +4,9 @@ abbr --add -- gc 'git commit -m'
 abbr --add -- gp 'git push'
 abbr --add -- cm chezmoi
 abbr --add -- ip 'ip --color --brief'
-abbr --add -- la 'eza -a'
-abbr --add -- ll 'eza -l'
-abbr --add -- lla 'eza -la'
+abbr --add -- la 'eza --all'
+abbr --add -- ll 'eza --long'
+abbr --add -- lla 'eza --long --all'
 abbr --add -- ls eza
 abbr --add -- lt 'eza --tree'
 abbr --add -- lta 'eza --tree --all'
@@ -53,16 +53,16 @@ end
 # Enable VI key bindings
 if test -n "$TERM"
     fish_vi_key_bindings
-    set -g fish_cursor_default block blink
-    set -g fish_cursor_insert line blink
-    set -g fish_cursor_replace_one underscore blink
-    set -g fish_cursor_visual block
+    set --global fish_cursor_default block blink
+    set --global fish_cursor_insert line blink
+    set --global fish_cursor_replace_one underscore blink
+    set --global fish_cursor_visual block
 end
 
 # Sponge plugin config
-set sponge_delay 5
+set --global sponge_delay 5
 
-if command -q vim
+if command --query vim
     set --global --export EDITOR vim
     set --global --export GIT_EDITOR vim
 end
@@ -74,7 +74,7 @@ set --global --export GPG_TTY (tty)
 
 # Ripgrep
 set --global --export RIPGREP_CONFIG_PATH ~/.config/ripgrep/ripgrep.cfg
-if command -q rg
+if command --query rg
     rg --generate complete-fish >~/.config/fish/completions/rg.fish
 end
 

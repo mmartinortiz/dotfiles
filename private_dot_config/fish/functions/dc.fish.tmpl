@@ -1,20 +1,20 @@
 {{ if eq .env_type "full" -}}
 function dc --description "devcontainer wrapper"
-    set -l workspace (pwd)
-    set -l mounts \
+    set --local workspace (pwd)
+    set --local mounts \
         --mount "type=bind,source=$HOME/.config/nvim,target=/home/vscode/.config/nvim" \
         --mount "type=bind,source=$HOME/.local/share/nvim,target=/home/vscode/.local/share/nvim" \
         --mount "type=bind,source=$HOME/.gitconfig,target=/home/vscode/.gitconfig" \
         --mount "type=bind,source=$HOME/.config/opencode,target=/home/vscode/.config/opencode"
     
     if test -d $HOME/.claude
-        set -a mounts --mount "type=bind,source=$HOME/.claude,target=/home/vscode/.claude"
+        set --append mounts --mount "type=bind,source=$HOME/.claude,target=/home/vscode/.claude"
     end
     if test -d $HOME/.local/share/opencode
-        set -a mounts --mount "type=bind,source=$HOME/.local/share/opencode,target=/home/vscode/.local/share/opencode"
+        set --append mounts --mount "type=bind,source=$HOME/.local/share/opencode,target=/home/vscode/.local/share/opencode"
     end
     if test -d $HOME/.agents
-        set -a mounts --mount "type=bind,source=$HOME/.agents,target=/home/vscode/.agents"
+        set --append mounts --mount "type=bind,source=$HOME/.agents,target=/home/vscode/.agents"
     end
     
     switch $argv[1]
