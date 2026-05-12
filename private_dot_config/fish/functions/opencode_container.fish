@@ -16,10 +16,11 @@ function opencode_container --description "Run opencode in container with curren
     test -d "$skills_dir"; or mkdir -p "$skills_dir"
 
     docker run --rm --interactive --tty \
+        --user (id -u):(id -g) \
         --volume (pwd):/workspace \
-        --volume "$config_dir":/root/.config/opencode \
-        --volume "$data_dir":/root/.local/share/opencode \
-        --volume "$skills_dir":/root/.agents/skills \
+        --volume "$config_dir":/home/node/.config/opencode \
+        --volume "$data_dir":/home/node/.local/share/opencode \
+        --volume "$skills_dir":/home/node/.agents/skills \
         --workdir /workspace \
         ghcr.io/anomalyco/opencode:latest $argv
 end
