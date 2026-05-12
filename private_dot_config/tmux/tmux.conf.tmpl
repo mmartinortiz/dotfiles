@@ -18,8 +18,12 @@ run '~/.tmux/plugins/vim-tmux-navigator/vim-tmux-navigator.tmux'
 
 set-environment -gF TMUX_PLUGIN_MANAGER_PATH '#{HOME}/.tmux/plugins'
 
-# Set default shell
+# Set default shell (prefer brew fish if available)
+{{ if stat "/home/linuxbrew/.linuxbrew/bin/fish" -}}
+set-option -g default-shell /home/linuxbrew/.linuxbrew/bin/fish
+{{ else -}}
 set-option -g default-shell /usr/bin/fish
+{{ end -}}
 
 # Save every 5 minutes
 set -g @continuum-save-interval '5'
