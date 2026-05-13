@@ -55,16 +55,16 @@ fc-cache -fv
 For convinience, the variables `CHEZMOI_GIT_EMAIL` and `CHEZMOI_GIT_NAME` can be defined on your system to provide Git with an Email and Name for the `.gitconfig`. For setting up the container, create a `setup.sh` script accessible by the devcontainer with the following content:
 
 ```bash
-#!/bin/bash 
-set -e 
+#!/bin/bash
+set -e
 
 # Fix brew permissions
 sudo chown -R "$(whoami)" /home/linuxbrew/.linuxbrew
 
 # Dotfiles
-chezmoi init --apply https://github.com/mmartinortiz/dotfiles 
+chezmoi init --apply https://github.com/mmartinortiz/dotfiles
 
-# Install the brew packates 
+# Install the brew packates
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 brew bundle --global
 ```
@@ -112,4 +112,3 @@ Reload `tmux` plugins with `Prefix + I`.
 - [Tmux, getting started](https://github.com/tmux/tmux/wiki/Getting-Started)
 - [Awesome Tmux](https://github.com/rothgar/awesome-tmux)
 - [Nerd Fonts](https://www.nerdfonts.com/)
-

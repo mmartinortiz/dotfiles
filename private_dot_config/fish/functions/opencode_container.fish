@@ -3,14 +3,14 @@ function opencode_container --description "Run opencode in container with curren
     set --local cyan (set_color cyan)
     set --local yellow (set_color yellow)
     set --local reset (set_color normal)
-    
+
     echo "$magenta󱜚$reset $yellow→$reset $cyan󰡨$reset Running opencode from container"
-    
+
     set --local config_dir "$HOME/.config/opencode"
     set --local data_dir "$HOME/.local/share/opencode"
     set --local auth_file "$HOME/.local/share/opencode/auth.json"
     set --local skills_dir "$HOME/.agents/skills"
-    
+
     # Ensure dirs/files exist (avoid mount failure)
     test -d "$config_dir"; or mkdir --parents "$config_dir"
     test -d "$data_dir"; or mkdir --parents "$data_dir"
