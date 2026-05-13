@@ -19,6 +19,10 @@ function opencode_container --description "Run opencode in container with curren
 
     docker run --rm --interactive --tty \
         --user (id --user):(id --group) \
+        --env HOME=/home/node \
+        --env XDG_CACHE_HOME=/tmp/cache \
+        --env XDG_STATE_HOME=/tmp/state \
+        --env XDG_DATA_HOME=/tmp/data \
         --cap-drop ALL \
         --security-opt no-new-privileges \
         --volume (pwd):/workspace \
