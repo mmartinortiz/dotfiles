@@ -1,14 +1,11 @@
 {{ if eq .env_type "full" -}}
 function dc --description "devcontainer wrapper"
-    argparse --ignore-unknown 'ssh' -- $argv
-    or return
-
     set --local workspace (pwd)
-    set --local mounts \
-        --mount "type=bind,source=$HOME/.config/nvim,target=/home/vscode/.config/nvim" \
-        --mount "type=bind,source=$HOME/.local/share/nvim,target=/home/vscode/.local/share/nvim" \
-        --mount "type=bind,source=$HOME/.gitconfig,target=/home/vscode/.gitconfig" \
-        --mount "type=bind,source=$HOME/.config/opencode,target=/home/vscode/.config/opencode"
+    set --local mounts
+    set --append mounts --mount "type=bind,source=$HOME/.config/nvim,target=/home/vscode/.config/nvim"
+    set --append mounts --mount "type=bind,source=$HOME/.local/share/nvim,target=/home/vscode/.local/share/nvim"
+    set --append mounts --mount "type=bind,source=$HOME/.gitconfig,target=/home/vscode/.gitconfig"
+    set --append mounts --mount "type=bind,source=$HOME/.config/opencode,target=/home/vscode/.config/opencode"
 
     if test -d $HOME/.claude
         set --append mounts --mount "type=bind,source=$HOME/.claude,target=/home/vscode/.claude"
@@ -19,9 +16,6 @@ function dc --description "devcontainer wrapper"
     if test -d $HOME/.agents
         set --append mounts --mount "type=bind,source=$HOME/.agents,target=/home/vscode/.agents"
     end
-    if set --query _flag_ssh; and test -d $HOME/.ssh
-        set --append mounts --mount "type=bind,source=$HOME/.ssh,target=/home/vscode/.ssh,readonly"
-    end
 
     switch $argv[1]
         case -h --help ''
@@ -31,7 +25,8 @@ function dc --description "devcontainer wrapper"
             echo ""
             echo "Commands:"
             echo "  up, u      Start container (remove existing)"
-            echo "  upf, uf    Start fast (skip post-create)"
+            echo "    --ssh    Mount ~/.ssh (up only)"
+            echo "  upf, uf    Start fast (skip post-create, reuse container)"
             echo "  build, b   Build image"
             echo "  exec, e    Run command in container"
             echo "  sh         Interactive bash shell"
@@ -41,12 +36,15 @@ function dc --description "devcontainer wrapper"
             echo ""
             echo "Examples:"
             echo "  dc up"
+            echo "  dc up --ssh"
             echo "  dc exec cargo build"
             echo "  dc sh"
-            echo ""
-            echo "Options:"
-            echo "  --ssh      Mount ~/.ssh read-only"
         case up u
+            argparse 'ssh' -- $argv[2..-1]
+            or return
+            if set --query _flag_ssh; and test -d $HOME/.ssh
+                set --append mounts --mount "type=bind,source=$HOME/.ssh,target=/home/vscode/.ssh"
+            end
             devcontainer up $mounts --remove-existing-container --workspace-folder $workspace
         case upf uf
             devcontainer up $mounts --skip-post-create --workspace-folder $workspace
