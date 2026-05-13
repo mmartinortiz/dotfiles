@@ -74,10 +74,6 @@ set --global --export GPG_TTY (tty)
 
 # Ripgrep
 set --global --export RIPGREP_CONFIG_PATH ~/.config/ripgrep/ripgrep.cfg
-if command --query rg
-    rg --generate complete-fish >~/.config/fish/completions/rg.fish
-end
-
 if test "$TERM" != dumb
     /home/linuxbrew/.linuxbrew/bin/starship init fish | source
 end

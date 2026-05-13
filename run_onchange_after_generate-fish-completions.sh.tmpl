@@ -1,0 +1,5 @@
+#!/bin/bash
+# rg: {{ output "rg" "--version" | trim | sha256sum }}
+
+mkdir -p ~/.config/fish/completions
+rg --generate complete-fish >~/.config/fish/completions/rg.fish
