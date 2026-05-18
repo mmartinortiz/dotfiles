@@ -10,6 +10,9 @@ function dc --description "devcontainer wrapper"
     if test -d $HOME/.claude
         set --append mounts --mount "type=bind,source=$HOME/.claude,target=/home/vscode/.claude"
     end
+    if test -e $HOME/.claude.json
+        set --append mounts --mount "type=bind,source=$HOME/.claude.json,target=/home/vscode/.claude.json"
+    end
     if test -d $HOME/.local/share/opencode
         set --append mounts --mount "type=bind,source=$HOME/.local/share/opencode,target=/home/vscode/.local/share/opencode"
     end
@@ -57,9 +60,21 @@ function dc --description "devcontainer wrapper"
         case fish
             devcontainer exec --workspace-folder $workspace fish
         case stop s
-            devcontainer stop --workspace-folder $workspace
+            set --local container_id (docker ps --quiet --filter "label=devcontainer.local_folder=$workspace")
+            if test -n "$container_id"
+                docker stop $container_id
+            else
+                echo "No running devcontainer found for $workspace"
+                return 1
+            end
         case down d
-            devcontainer down --workspace-folder $workspace
+            set --local container_id (docker ps --all --quiet --filter "label=devcontainer.local_folder=$workspace")
+            if test -n "$container_id"
+                docker rm --force $container_id
+            else
+                echo "No devcontainer found for $workspace"
+                return 1
+            end
         case '*'
             devcontainer $argv
     end
