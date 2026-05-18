@@ -104,7 +104,42 @@ Start `tmux` or join an existing session:
 tmux new-session -A
 ```
 
-Reload `tmux` plugins with `Prefix + I`.
+### Keybindings
+
+**Prefix**: `C-a` (Ctrl+a)
+
+#### Direct Bindings (no prefix)
+
+| Key | Action |
+|-----|--------|
+| `C-g` | Copy mode |
+
+#### Prefix Bindings
+
+| Key | Action |
+|-----|--------|
+| `C-a` | Send prefix to nested tmux |
+| `-` | Split horizontal |
+| `\|` | Split vertical |
+| `v` | Paste from Wayland clipboard |
+| `I` | Install TPM plugins |
+| `U` | Update TPM plugins |
+| `Space` | Which-key menu |
+| `M-g` | Lazygit popup (toggle) |
+| `M-t` | Terminal popup (toggle) |
+
+#### Which-Key Menu (prefix + Space)
+
+| Key | Action |
+|-----|--------|
+| `o` | +Popups |
+| `w` | +Windows |
+| `P` | +Panes |
+| `b` | +Buffers |
+| `s` | +Sessions |
+| `C` | +Client |
+| `?` | +Keys |
+| `r` | Reload config |
 
 ## Links
 
