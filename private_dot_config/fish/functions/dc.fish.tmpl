@@ -31,7 +31,8 @@ function dc --description "devcontainer wrapper"
             echo ""
             echo "Commands:"
             echo "  up, u      Start container (remove existing)"
-            echo "    --ssh    Mount ~/.ssh (up only)"
+            echo "    --ssh      Mount ~/.ssh (up only)"
+            echo "    --upgrade  Run devcontainer upgrade before up"
             echo "  upf, uf    Start fast (skip post-create, reuse container)"
             echo "  build, b   Build image"
             echo "  exec, e    Run command in container"
@@ -46,10 +47,14 @@ function dc --description "devcontainer wrapper"
             echo "  dc exec cargo build"
             echo "  dc sh"
         case up u
-            argparse 'ssh' -- $argv[2..-1]
+            argparse 'ssh' 'upgrade' -- $argv[2..-1]
             or return
             if set --query _flag_ssh; and test -d $HOME/.ssh
                 set --append mounts --mount "type=bind,source=$HOME/.ssh,target=/home/vscode/.ssh"
+            end
+            if set --query _flag_upgrade
+                devcontainer upgrade --workspace-folder $workspace
+                or return
             end
             devcontainer up $mounts --remove-existing-container --workspace-folder $workspace
         case upf uf
