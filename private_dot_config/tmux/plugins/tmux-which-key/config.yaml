@@ -55,6 +55,9 @@ items:
       - name: Lazygit
         key: g
         command: 'run-shell "~/.tmux/plugins/tmux-tpad/tpad.tmux toggle lazygit"'
+      - name: Git push
+        key: p
+        command: 'run-shell "~/.tmux/plugins/tmux-tpad/tpad.tmux toggle gitpush"'
       - name: Terminal
         key: t
         command: 'run-shell "~/.tmux/plugins/tmux-tpad/tpad.tmux toggle terminal"'

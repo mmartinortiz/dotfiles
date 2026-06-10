@@ -74,13 +74,19 @@ set -g @catppuccin_window_number_position "right"
 set -g @catppuccin_window_status_style 'rounded'
 set -g @catppuccin_window_flags "icon"
 
-# TPad floating popups (M-g lazygit, M-t terminal, prefix+Space o menu)
+# TPad floating popups (M-g lazygit, M-p git push, M-t terminal, prefix+Space o menu)
 # Note: Alt+key avoids conflict when typing in popup (e.g., commit messages)
 set -g @tpad-lazygit-bind "M-g"
 set -g @tpad-lazygit-cmd "lazygit"
 set -g @tpad-lazygit-width "80%"
 set -g @tpad-lazygit-height "80%"
 set -g @tpad-lazygit-per-dir "true"
+
+set -g @tpad-gitpush-bind "M-p"
+set -g @tpad-gitpush-cmd "fish --interactive --command \"git push; read --prompt-str='Press Enter to close' _\""
+set -g @tpad-gitpush-width "80%"
+set -g @tpad-gitpush-height "80%"
+set -g @tpad-gitpush-dir "#{pane_current_path}"
 
 set -g @tpad-terminal-bind "M-t"
 set -g @tpad-terminal-width "80%"
