@@ -27,4 +27,22 @@ return {
       },
     },
   },
+  {
+    "mason-org/mason.nvim",
+    opts = {
+      ensure_installed = {
+        "bash-language-server",
+        "lua-language-server",
+        "markdown-toc",
+        "markdownlint",
+        "marksman",
+        "prettier",
+        "pyright",
+        "ruff",
+        "shellcheck",
+        "shfmt",
+        "stylua",
+      },
+    },
+  },
 }
