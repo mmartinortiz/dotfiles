@@ -3,7 +3,6 @@ function dc --description "devcontainer wrapper"
     set --local workspace (pwd)
     set --local mounts
     set --append mounts --mount "type=bind,source=$HOME/.config/nvim,target=/home/vscode/.config/nvim"
-    set --append mounts --mount "type=bind,source=$HOME/.local/share/nvim,target=/home/vscode/.local/share/nvim"
     set --append mounts --mount "type=bind,source=$HOME/.gitconfig,target=/home/vscode/.gitconfig"
     set --append mounts --mount "type=bind,source=$HOME/.config/opencode,target=/home/vscode/.config/opencode"
 
