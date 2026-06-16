@@ -19,9 +19,6 @@ function dc --description "devcontainer wrapper"
     if test -d $HOME/.agents
         set --append mounts --mount "type=bind,source=$HOME/.agents,target=/home/vscode/.agents"
     end
-    if test -d $HOME/.cave
-        set --append mounts --mount "type=bind,source=$HOME/.cave,target=/home/vscode/.cave"
-    end
 
     switch $argv[1]
         case -h --help ''
