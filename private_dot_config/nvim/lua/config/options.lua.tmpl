@@ -17,7 +17,25 @@ vim.o.shell = "fish"
 -- Use system clipboard for all yank/paste operations
 vim.opt.clipboard = "unnamedplus"
 
--- OSC52 clipboard provider (works over SSH, tmux, containers)
+{{ if eq .env_type "full" -}}
+-- Wayland desktop: OSC52 for copy (works through tmux), wl-paste for paste
+vim.g.clipboard = {
+  name = "OSC 52 + wl-paste",
+  copy = {
+    ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+    ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+  },
+  paste = {
+    ["+"] = function()
+      return vim.fn.systemlist("wl-paste --no-newline")
+    end,
+    ["*"] = function()
+      return vim.fn.systemlist("wl-paste --no-newline --primary")
+    end,
+  },
+}
+{{ else -}}
+-- Devcontainer/remote: OSC52 for both copy and paste
 vim.g.clipboard = {
   name = "OSC 52",
   copy = {
@@ -29,3 +47,4 @@ vim.g.clipboard = {
     ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
   },
 }
+{{ end -}}
