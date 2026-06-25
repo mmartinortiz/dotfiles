@@ -63,6 +63,35 @@ elseif vim.env.DISPLAY then
     },
     cache_enabled = 0,
   }
+elseif vim.env.TMUX then
+  -- Remote/SSH in tmux (no display server): dual-write OSC52 + tmux buffer
+  -- Copy: OSC52 sends to host terminal clipboard, tmux load-buffer for inter-pane p
+  -- Paste: tmux save-buffer (OSC52 paste unsupported by most terminals)
+  local osc52 = require("vim.ui.clipboard.osc52")
+  vim.g.clipboard = {
+    name = "tmux+osc52",
+    copy = {
+      ["+"] = function(lines)
+        osc52.copy("+")(lines)
+        local content = table.concat(lines, "\n")
+        vim.fn.system({ "tmux", "load-buffer", "-" }, content)
+      end,
+      ["*"] = function(lines)
+        osc52.copy("*")(lines)
+        local content = table.concat(lines, "\n")
+        vim.fn.system({ "tmux", "load-buffer", "-" }, content)
+      end,
+    },
+    paste = {
+      ["+"] = function()
+        return vim.fn.systemlist({ "tmux", "save-buffer", "-" })
+      end,
+      ["*"] = function()
+        return vim.fn.systemlist({ "tmux", "save-buffer", "-" })
+      end,
+    },
+    cache_enabled = 0,
+  }
 else
   -- Fallback for other environments: OSC52
   vim.g.clipboard = {
