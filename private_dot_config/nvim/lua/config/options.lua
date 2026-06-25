@@ -36,8 +36,8 @@ elseif vim.env.WAYLAND_DISPLAY then
   vim.g.clipboard = {
     name = "wl-clipboard",
     copy = {
-      ["+"] = "wl-copy --foreground --type text/plain",
-      ["*"] = "wl-copy --foreground --primary --type text/plain",
+      ["+"] = "wl-copy --type text/plain",
+      ["*"] = "wl-copy --primary --type text/plain",
     },
     paste = {
       ["+"] = function()
