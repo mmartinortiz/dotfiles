@@ -28,7 +28,9 @@ function __dc_inject_features --description "Inject features from dc_features.js
     cp $devcontainer_json $backup_file
     or return 1
 
-    jq --slurpfile new_features $features_file '.features = ((.features // {}) * $new_features[0])' $devcontainer_json >$devcontainer_json.tmp
+    sed '/^[[:space:]]*\/\//d; /\/\*/,/\*\//d' $devcontainer_json \
+        | jq --slurpfile new_features $features_file '.features = ((.features // {}) * $new_features[0])' \
+        >$devcontainer_json.tmp
     and mv $devcontainer_json.tmp $devcontainer_json
     or begin
         mv $backup_file $devcontainer_json
