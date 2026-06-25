@@ -1,62 +1,22 @@
 {{ if eq .env_type "full" -}}
-function __dc_inject_features --description "Inject features from dc_features.json into devcontainer.json"
-    set --local workspace $argv[1]
+function __dc_read_features --description "Read dc_features.json and return --additional-features args"
     set --local features_file $HOME/.config/fish/functions/dc_features.json
-    set --local devcontainer_json $workspace/.devcontainer/devcontainer.json
-    set --local backup_file $devcontainer_json.dc-backup
 
     if not test -f $features_file
-        echo "dc: dc_features.json not found, skipping feature injection"
-        return 0
+        echo "dc: dc_features.json not found, skipping" >&2
+        return 1
     end
-
     if not test -s $features_file
-        echo "dc: dc_features.json is empty, skipping feature injection"
-        return 0
+        echo "dc: dc_features.json is empty, skipping" >&2
+        return 1
     end
-
     if not jq --exit-status . $features_file >/dev/null 2>&1
-        echo "dc: dc_features.json contains invalid JSON, skipping feature injection"
+        echo "dc: dc_features.json contains invalid JSON" >&2
         return 1
     end
 
-    if not test -f $devcontainer_json
-        echo "dc: devcontainer.json not found at $devcontainer_json, skipping feature injection"
-        return 0
-    end
-
-    cp $devcontainer_json $backup_file
-    or return 1
-
-    sed '/^[[:space:]]*\/\//d; /\/\*/,/\*\//d' $devcontainer_json \
-        | jq --slurpfile new_features $features_file '.features = ((.features // {}) * $new_features[0])' \
-        >$devcontainer_json.tmp
-    and mv $devcontainer_json.tmp $devcontainer_json
-    or begin
-        mv $backup_file $devcontainer_json
-        echo "dc: failed to inject features, restored original devcontainer.json"
-        return 1
-    end
-
-    echo "dc: injected features from dc_features.json"
-end
-
-function __dc_remove_features --description "Restore devcontainer.json from backup after build"
-    set --local workspace $argv[1]
-    set --local devcontainer_json $workspace/.devcontainer/devcontainer.json
-    set --local backup_file $devcontainer_json.dc-backup
-
-    if not test -f $backup_file
-        return 0
-    end
-
-    mv $backup_file $devcontainer_json
-    or begin
-        echo "dc: failed to restore devcontainer.json from backup"
-        return 1
-    end
-
-    echo "dc: restored original devcontainer.json"
+    echo --additional-features
+    jq --compact-output . $features_file
 end
 
 function dc --description "devcontainer wrapper"
@@ -106,9 +66,8 @@ function dc --description "devcontainer wrapper"
             echo "  dc sh"
             echo ""
             echo "Features:"
-            echo "  Build auto-injects features from ~/.config/fish/functions/dc_features.json"
+            echo "  --extra-features reads ~/.config/fish/functions/dc_features.json"
             echo "  File must contain a JSON object, e.g.: {\"ghcr.io/devcontainers/features/node\": {}}"
-            echo "  Original devcontainer.json is restored after build"
         case up u
             argparse 'ssh' 'upgrade' 'extra-features' -- $argv[2..-1]
             or return
@@ -119,29 +78,21 @@ function dc --description "devcontainer wrapper"
                 devcontainer upgrade --workspace-folder $workspace
                 or return
             end
+            set --local extra_args
             if set --query _flag_extra_features
-                __dc_inject_features $workspace
+                set extra_args (__dc_read_features)
             end
-            devcontainer up $mounts --remove-existing-container --workspace-folder $workspace
-            set --local up_status $status
-            if set --query _flag_extra_features
-                __dc_remove_features $workspace
-            end
-            return $up_status
+            devcontainer up $mounts $extra_args --remove-existing-container --workspace-folder $workspace
         case upf uf
             devcontainer up $mounts --skip-post-create --workspace-folder $workspace
         case build b
             argparse 'extra-features' -- $argv[2..-1]
             or return
+            set --local extra_args
             if set --query _flag_extra_features
-                __dc_inject_features $workspace
+                set extra_args (__dc_read_features)
             end
-            devcontainer build --workspace-folder $workspace
-            set --local build_status $status
-            if set --query _flag_extra_features
-                __dc_remove_features $workspace
-            end
-            return $build_status
+            devcontainer build $extra_args --workspace-folder $workspace
         case exec e
             devcontainer exec --workspace-folder $workspace $argv[2..-1]
         case sh
