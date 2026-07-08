@@ -1,0 +1,385 @@
+{{ if eq .env_type "full" -}}
+function __pat_registry_path
+    echo $HOME/.config/fish/pats.json
+end
+
+function __pat_check_deps
+    if not command --query jq
+        echo "pat: jq not found" >&2
+        return 1
+    end
+    if not command --query pass
+        echo "pat: pass not found" >&2
+        return 1
+    end
+end
+
+function __pat_check_registry
+    set --local registry (__pat_registry_path)
+    if not test -f $registry
+        echo "pat: registry not found at $registry" >&2
+        return 1
+    end
+    if not test -s $registry
+        echo "pat: registry is empty at $registry" >&2
+        return 1
+    end
+    if not jq --exit-status . $registry >/dev/null 2>&1
+        echo "pat: registry contains invalid JSON" >&2
+        return 1
+    end
+end
+
+function __pat_check_key
+    set --local key $argv[1]
+    set --local registry (__pat_registry_path)
+    if test (jq --raw-output --arg key $key 'has($key)' $registry) != true
+        echo "pat: unknown entry '$key'" >&2
+        return 1
+    end
+end
+
+function __pat_field
+    set --local key $argv[1]
+    set --local field $argv[2]
+    set --local registry (__pat_registry_path)
+    jq --raw-output --arg key $key '.[$key].'"$field" $registry
+end
+
+function __pat_validate_date --description "Validate YYYY-MM-DD format and value"
+    set --local d $argv[1]
+    if not string match --quiet --regex '^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$' $d
+        return 1
+    end
+    # Also verify with date command (catches e.g. Feb 30)
+    if not date --date=$d +%s >/dev/null 2>&1
+        return 1
+    end
+    return 0
+end
+
+function __pat_list
+    set --local registry (__pat_registry_path)
+    set --local today (date +%s)
+
+    printf "%-12s %-25s %-12s %-15s %s\n" KEY SERVICE EXPIRES STATUS SCOPES
+    printf "%-12s %-25s %-12s %-15s %s\n" --- ------- ------- ------ ------
+
+    for key in (jq --raw-output 'keys[]' $registry)
+        set --local service (__pat_field $key service)
+        set --local expires (__pat_field $key expires)
+        set --local scopes (__pat_field $key scopes)
+        set --local exp_epoch (date --date=$expires +%s 2>/dev/null)
+        set --local pat_status
+        set --local color
+
+        if test -z "$exp_epoch"
+            set pat_status "UNKNOWN"
+            set color yellow
+        else
+            set --local days_left (math "($exp_epoch - $today) / 86400")
+            if test $days_left -lt 0
+                set pat_status "EXPIRED"
+                set color red
+            else if test $days_left -lt 7
+                set pat_status "WARN ("$days_left"d)"
+                set color yellow
+            else if test $days_left -lt 30
+                set pat_status "OK ("$days_left"d)"
+                set color yellow
+            else
+                set pat_status "OK ("$days_left"d)"
+                set color green
+            end
+        end
+
+        printf "%-12s %-25s %-12s %s%-15s%s %s\n" $key $service $expires (set_color $color) $pat_status (set_color normal) $scopes
+    end
+end
+
+function __pat_check
+    set --local registry (__pat_registry_path)
+    if not test -f $registry; or not test -s $registry
+        return 0
+    end
+    if not jq --exit-status . $registry >/dev/null 2>&1
+        return 0
+    end
+
+    set --local today (date +%s)
+    set --local warnings
+
+    for key in (jq --raw-output 'keys[]' $registry)
+        set --local name (__pat_field $key name)
+        set --local expires (__pat_field $key expires)
+        set --local exp_epoch (date --date=$expires +%s 2>/dev/null)
+
+        if test -z "$exp_epoch"
+            continue
+        end
+
+        set --local days_left (math "($exp_epoch - $today) / 86400")
+        if test $days_left -lt 0
+            set --append warnings (set_color red)"PAT $key ($name): EXPIRED"(set_color normal)
+        else if test $days_left -lt 7
+            set --append warnings (set_color yellow)"PAT $key ($name): expires in $days_left days"(set_color normal)
+        end
+    end
+
+    if test (count $warnings) -gt 0
+        for w in $warnings
+            echo $w
+        end
+    end
+end
+
+function __pat_export
+    set --local key $argv[1]
+    if test -z "$key"
+        echo "Usage: pat export <name>" >&2
+        return 1
+    end
+
+    __pat_check_key $key
+    or return 1
+
+    set --local env_var (__pat_field $key env_var)
+    set --local pass_path (__pat_field $key pass_path)
+
+    if test -z "$env_var"; or test "$env_var" = null
+        echo "pat: no env_var configured for '$key'" >&2
+        return 1
+    end
+
+    set --local token (pass show $pass_path 2>/dev/null)
+    if test $status -ne 0
+        echo "pat: failed to retrieve token from pass at '$pass_path'" >&2
+        return 1
+    end
+
+    set --global --export $env_var $token
+    echo "Exported \$$env_var for $key"
+end
+
+function __pat_login
+    set --local key $argv[1]
+    if test -z "$key"
+        echo "Usage: pat login <name>" >&2
+        return 1
+    end
+
+    __pat_check_key $key
+    or return 1
+
+    __pat_export $key
+    or return 1
+
+    set --local login_cmd (__pat_field $key login_cmd)
+    if test -z "$login_cmd"; or test "$login_cmd" = null
+        echo "pat: no login_cmd configured for '$key'" >&2
+        return 1
+    end
+
+    eval $login_cmd
+end
+
+function __pat_renew
+    set --local key $argv[1]
+    if test -z "$key"
+        echo "Usage: pat renew <name>" >&2
+        return 1
+    end
+
+    __pat_check_key $key
+    or return 1
+
+    set --local registry (__pat_registry_path)
+    set --local renew_url (__pat_field $key renew_url)
+    set --local pass_path (__pat_field $key pass_path)
+
+    if test -n "$renew_url"; and test "$renew_url" != null
+        xdg-open $renew_url
+    end
+
+    read --prompt-str "Paste new token (empty to skip): " --silent new_token
+    echo
+
+    if test -n "$new_token"
+        echo $new_token | pass insert --multiline --force $pass_path
+        echo "Updated token in pass"
+    end
+
+    read --prompt-str "New expiry date (YYYY-MM-DD, empty to skip): " new_expiry
+
+    if test -n "$new_expiry"
+        if not __pat_validate_date $new_expiry
+            echo "pat: invalid date format, expected YYYY-MM-DD" >&2
+            return 1
+        end
+        jq --arg key $key --arg date $new_expiry '.[$key].expires = $date' $registry >$registry.tmp
+        and mv $registry.tmp $registry
+        echo "Updated expiry to $new_expiry"
+    end
+
+    __pat_list
+end
+
+function __pat_add
+    set --local key $argv[1]
+    if test -z "$key"
+        echo "Usage: pat add <name>" >&2
+        echo "  <name> is the short key for this PAT (e.g. ghcr, npm, aws)" >&2
+        return 1
+    end
+
+    set --local registry (__pat_registry_path)
+
+    # Check if key already exists
+    if test -f $registry; and test -s $registry
+        if test (jq --raw-output --arg key $key 'has($key)' $registry) = true
+            read --prompt-str "Entry '$key' already exists. Overwrite? [y/N]: " confirm
+            if not string match --quiet --ignore-case y $confirm
+                echo "Aborted"
+                return 1
+            end
+        end
+    else
+        # Create empty registry if it doesn't exist
+        echo '{}' >$registry
+    end
+
+    # Prompt for each field
+    read --prompt-str "Service (e.g. ghcr.io): " service
+    if test -z "$service"
+        echo "pat: service is required" >&2
+        return 1
+    end
+
+    read --prompt-str "Description (e.g. GitHub Container Registry): " name
+    if test -z "$name"
+        echo "pat: description is required" >&2
+        return 1
+    end
+
+    read --prompt-str "Pass path (e.g. dev/ghcr-token): " pass_path
+    if test -z "$pass_path"
+        echo "pat: pass_path is required" >&2
+        return 1
+    end
+
+    read --prompt-str "Environment variable (e.g. GITHUB_TOKEN): " env_var
+    if test -z "$env_var"
+        echo "pat: env_var is required" >&2
+        return 1
+    end
+
+    read --prompt-str "Scopes (e.g. read:packages,write:packages, optional): " scopes
+    test -z "$scopes"; and set scopes ""
+
+    read --prompt-str "Expiry date (YYYY-MM-DD): " expires
+    if test -z "$expires"
+        echo "pat: expiry date is required" >&2
+        return 1
+    end
+    if not __pat_validate_date $expires
+        echo "pat: invalid date format, expected YYYY-MM-DD" >&2
+        return 1
+    end
+
+    read --prompt-str "Renewal URL (optional): " renew_url
+    test -z "$renew_url"; and set renew_url ""
+
+    read --prompt-str "Login command (optional, use \$ENV_VAR for token): " login_cmd
+    test -z "$login_cmd"; and set login_cmd ""
+
+    # Prompt for the token
+    read --prompt-str "Token value: " --silent token
+    echo
+
+    if test -z "$token"
+        echo "pat: token is required" >&2
+        return 1
+    end
+
+    # Store token in pass
+    echo $token | pass insert --multiline --force $pass_path
+    or begin
+        echo "pat: failed to store token in pass" >&2
+        return 1
+    end
+
+    # Build JSON entry and merge into registry
+    set --local entry (jq --null-input \
+        --arg service $service \
+        --arg name $name \
+        --arg pass_path $pass_path \
+        --arg env_var $env_var \
+        --arg scopes "$scopes" \
+        --arg expires $expires \
+        --arg renew_url "$renew_url" \
+        --arg login_cmd "$login_cmd" \
+        '{
+            service: $service,
+            name: $name,
+            pass_path: $pass_path,
+            env_var: $env_var,
+            scopes: $scopes,
+            expires: $expires,
+            renew_url: $renew_url,
+            login_cmd: $login_cmd
+        }')
+
+    jq --arg key $key --argjson entry "$entry" '.[$key] = $entry' $registry >$registry.tmp
+    and mv $registry.tmp $registry
+
+    echo "Added '$key' to registry"
+    echo "Token stored in pass at '$pass_path'"
+end
+
+function pat --description "manage personal access tokens via pass"
+    __pat_check_deps
+    or return 1
+
+    switch $argv[1]
+        case -h --help ''
+            echo "pat - manage personal access tokens via pass"
+            echo ""
+            echo "Usage: pat <command> [args]"
+            echo ""
+            echo "Commands:"
+            echo "  list, ls     List PATs with expiry status"
+            echo "  add <name>   Add a new PAT interactively"
+            echo "  export <name> Export PAT to configured env var"
+            echo "  login <name>  Export + run login command"
+            echo "  renew <name>  Open renewal URL and update token/expiry"
+            echo "  check         Show only expired/warning PATs"
+            echo ""
+            echo "Registry: ~/.config/fish/pats.json"
+            echo "Tokens stored in: pass (password-store)"
+        case list ls
+            __pat_check_registry
+            or return 1
+            __pat_list
+        case add
+            __pat_add $argv[2]
+        case export
+            __pat_check_registry
+            or return 1
+            __pat_export $argv[2]
+        case login
+            __pat_check_registry
+            or return 1
+            __pat_login $argv[2]
+        case renew
+            __pat_check_registry
+            or return 1
+            __pat_renew $argv[2]
+        case check
+            __pat_check
+        case '*'
+            echo "pat: unknown command '$argv[1]'" >&2
+            echo "Run 'pat --help' for usage" >&2
+            return 1
+    end
+end
+{{ end -}}
