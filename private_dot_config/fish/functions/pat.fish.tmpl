@@ -207,6 +207,12 @@ function __pat_renew
     if test -n "$new_token"
         echo $new_token | pass insert --multiline --force $pass_path
         echo "Updated token in pass"
+
+        set --local env_var (__pat_field $key env_var)
+        if test -n "$env_var"; and test "$env_var" != null; and set --query $env_var
+            set --global --export $env_var $new_token
+            echo "Updated \$$env_var"
+        end
     end
 
     read --prompt-str "New expiry date (YYYY-MM-DD, empty to skip): " new_expiry
