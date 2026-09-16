@@ -141,3 +141,15 @@ run '~/.tmux/plugins/tmux-tpad/tpad.tmux'
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 run '~/.tmux/plugins/tpm/tpm'
+
+# Fix: catppuccin sets message-(command-)style with align=centre, which
+# triggers a tmux renderer bug (upstream tmux#5328) where the rename-window
+# command-prompt draws only the centered text without clearing the full
+# status-line width, leaving stale trailing characters from the previous
+# (longer) window name visible until Enter/Esc. Override to align=left
+# (tmux default) which clears/fills the full width and avoids the bug.
+# Must stay at the very end of the file: catppuccin's own message-style is
+# set inside its plugin's `run` script, which executes asynchronously and
+# would otherwise clobber an earlier override.
+set -gF message-style "fg=#{@thm_teal},bg=#{@thm_overlay_0},align=left"
+set -gF message-command-style "fg=#{@thm_teal},bg=#{@thm_overlay_0},align=left"
