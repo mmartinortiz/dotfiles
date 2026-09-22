@@ -26,12 +26,6 @@ function dc --description "devcontainer wrapper"
     set --append mounts --mount "type=bind,source=$HOME/.gitconfig,target=/home/vscode/.gitconfig"
     set --append mounts --mount "type=bind,source=$HOME/.config/opencode,target=/home/vscode/.config/opencode"
 
-    if test -d $HOME/.claude
-        set --append mounts --mount "type=bind,source=$HOME/.claude,target=/home/vscode/.claude"
-    end
-    if test -e $HOME/.claude.json
-        set --append mounts --mount "type=bind,source=$HOME/.claude.json,target=/home/vscode/.claude.json"
-    end
     if test -d $HOME/.local/share/opencode
         set --append mounts --mount "type=bind,source=$HOME/.local/share/opencode,target=/home/vscode/.local/share/opencode"
     end
