@@ -1,22 +1,11 @@
 {{ if eq .env_type "full" -}}
-function __dc_read_features --description "Read dc_features.json and return --additional-features args"
-    set --local features_file $HOME/.config/fish/functions/dc_features.json
-
-    if not test -f $features_file
-        echo "dc: dc_features.json not found, skipping" >&2
-        return 1
-    end
-    if not test -s $features_file
-        echo "dc: dc_features.json is empty, skipping" >&2
-        return 1
-    end
-    if not jq --exit-status . $features_file >/dev/null 2>&1
-        echo "dc: dc_features.json contains invalid JSON" >&2
-        return 1
+function __dc_build_feature_args --description "Build --additional-features args from feature refs"
+    if test (count $argv) -eq 0
+        return
     end
 
     echo --additional-features
-    jq --compact-output . $features_file
+    printf '%s\n' $argv | jq --raw-input --slurp --compact-output 'split("\n") | map(select(length > 0)) | map({(.): {}}) | add'
 end
 
 function dc --description "devcontainer wrapper"
@@ -43,10 +32,12 @@ function dc --description "devcontainer wrapper"
             echo "  up, u      Start container (remove existing)"
             echo "    --ssh              Mount ~/.ssh (up only)"
             echo "    --upgrade          Run devcontainer upgrade before up"
-            echo "    --extra-features   Inject features from dc_features.json"
+            echo "    --opencode         Install opencode.ai feature"
+            echo "    --neovim           Install neovim-pack feature"
             echo "  upf, uf    Start fast (skip post-create, reuse container)"
             echo "  build, b   Build image"
-            echo "    --extra-features   Inject features from dc_features.json"
+            echo "    --opencode         Install opencode.ai feature"
+            echo "    --neovim           Install neovim-pack feature"
             echo "  exec, e    Run command in container"
             echo "  sh         Interactive bash shell"
             echo "  fish       Interactive fish shell"
@@ -56,14 +47,11 @@ function dc --description "devcontainer wrapper"
             echo "Examples:"
             echo "  dc up"
             echo "  dc up --ssh"
+            echo "  dc up --opencode --neovim"
             echo "  dc exec cargo build"
             echo "  dc sh"
-            echo ""
-            echo "Features:"
-            echo "  --extra-features reads ~/.config/fish/functions/dc_features.json"
-            echo "  File must contain a JSON object, e.g.: {\"ghcr.io/devcontainers/features/node\": {}}"
         case up u
-            argparse 'ssh' 'upgrade' 'extra-features' -- $argv[2..-1]
+            argparse 'ssh' 'upgrade' 'opencode' 'neovim' -- $argv[2..-1]
             or return
             if set --query _flag_ssh; and test -d $HOME/.ssh
                 set --append mounts --mount "type=bind,source=$HOME/.ssh,target=/home/vscode/.ssh"
@@ -72,20 +60,28 @@ function dc --description "devcontainer wrapper"
                 devcontainer upgrade --workspace-folder $workspace
                 or return
             end
-            set --local extra_args
-            if set --query _flag_extra_features
-                set extra_args (__dc_read_features)
+            set --local features
+            if set --query _flag_opencode
+                set --append features ghcr.io/devcontainer-community/devcontainer-features/opencode.ai:1
             end
+            if set --query _flag_neovim
+                set --append features ghcr.io/mmartinortiz/devcontainer-features/neovim-pack:1
+            end
+            set --local extra_args (__dc_build_feature_args $features)
             devcontainer up $mounts $extra_args --remove-existing-container --workspace-folder $workspace
         case upf uf
             devcontainer up $mounts --skip-post-create --workspace-folder $workspace
         case build b
-            argparse 'extra-features' -- $argv[2..-1]
+            argparse 'opencode' 'neovim' -- $argv[2..-1]
             or return
-            set --local extra_args
-            if set --query _flag_extra_features
-                set extra_args (__dc_read_features)
+            set --local features
+            if set --query _flag_opencode
+                set --append features ghcr.io/devcontainer-community/devcontainer-features/opencode.ai:1
             end
+            if set --query _flag_neovim
+                set --append features ghcr.io/mmartinortiz/devcontainer-features/neovim-pack:1
+            end
+            set --local extra_args (__dc_build_feature_args $features)
             devcontainer build $extra_args --workspace-folder $workspace
         case exec e
             devcontainer exec --workspace-folder $workspace $argv[2..-1]
