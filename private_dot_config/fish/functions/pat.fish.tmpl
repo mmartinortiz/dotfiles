@@ -209,9 +209,9 @@ function __pat_renew
         echo "Updated token in pass"
 
         set --local env_var (__pat_field $key env_var)
-        if test -n "$env_var"; and test "$env_var" != null; and set --query $env_var
+        if test -n "$env_var"; and test "$env_var" != null
             set --global --export $env_var $new_token
-            echo "Updated \$$env_var"
+            echo "Exported \$$env_var"
         end
     end
 
