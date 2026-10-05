@@ -131,6 +131,39 @@ function __pat_check
             echo $w
         end
     end
+
+    # Remind about tokens not yet exported in this shell
+    set --local missing
+    for key in (jq --raw-output 'keys[]' $registry)
+        set --local env_var (__pat_field $key env_var)
+        test -z "$env_var"; and continue
+        test "$env_var" = null; and continue
+        set --query $env_var; and continue
+
+        # Opt-out: "remind": false in registry entry
+        test (__pat_field $key remind) = false; and continue
+
+        # Exclude expired tokens
+        set --local expires (__pat_field $key expires)
+        set --local exp_epoch (date --date=$expires +%s 2>/dev/null)
+        if test -n "$exp_epoch"
+            set --local days_left (math "($exp_epoch - $today) / 86400")
+            test $days_left -lt 0; and continue
+        end
+
+        set --append missing $key
+    end
+
+    if test (count $missing) -gt 0
+        echo (set_color --bold cyan)"Tokens not exported in this shell:"(set_color normal)
+        for key in $missing
+            set --local env_var (__pat_field $key env_var)
+            printf "  %s%-12s%s %s\$%-20s%s %s→  pat export %s%s\n" \
+                (set_color yellow) $key (set_color normal) \
+                (set_color brblack) $env_var (set_color normal) \
+                (set_color green) $key (set_color normal)
+        end
+    end
 end
 
 function __pat_export
@@ -358,7 +391,9 @@ function pat --description "manage personal access tokens via pass"
             echo "  export <name> Export PAT to configured env var"
             echo "  login <name>  Export + run login command"
             echo "  renew <name>  Open renewal URL and update token/expiry"
-            echo "  check         Show only expired/warning PATs"
+            echo "  check         Show expired/warning PATs and unexported tokens"
+            echo ""
+            echo "Set \"remind\": false on a registry entry to hide it from 'pat check' export reminders."
             echo ""
             echo "Registry: ~/.config/fish/pats.json"
             echo "Tokens stored in: pass (password-store)"
