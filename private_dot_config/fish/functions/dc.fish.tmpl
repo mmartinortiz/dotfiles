@@ -8,6 +8,52 @@ function __dc_build_feature_args --description "Build --additional-features args
     printf '%s\n' $argv | jq --raw-input --slurp --compact-output 'split("\n") | map(select(length > 0)) | map({(.): {}}) | add'
 end
 
+function __dc_pull_images --description "Pull base image(s) for devcontainer config"
+    set --local workspace $argv[1]
+    set --local config (devcontainer read-configuration --workspace-folder $workspace 2>/dev/null)
+    or begin
+        echo "warning: could not read devcontainer configuration, skipping pull"
+        return 0
+    end
+
+    set --local image (echo $config | jq --raw-output '.configuration.image // empty')
+    if test -n "$image"
+        docker pull $image
+        or echo "warning: pull failed for $image, continuing"
+        return 0
+    end
+
+    set --local dockerfile (echo $config | jq --raw-output '.configuration.build.dockerfile // .configuration.dockerFile // empty')
+    if test -n "$dockerfile"
+        if not string match --quiet '/*' $dockerfile
+            set dockerfile $workspace/.devcontainer/$dockerfile
+        end
+        if not test -f $dockerfile
+            echo "warning: dockerfile $dockerfile not found, skipping pull"
+            return 0
+        end
+        for ref in (grep -i '^from ' $dockerfile | awk '{print $2}')
+            if test -z "$ref"
+                continue
+            end
+            if string match --quiet --regex '^(\$|\$\{|scratch$)' -- $ref
+                echo "warning: skipping unresolvable FROM ref: $ref"
+                continue
+            end
+            docker pull $ref
+            or echo "warning: pull failed for $ref, continuing"
+        end
+        return 0
+    end
+
+    if echo $config | jq --exit-status '.configuration.dockerComposeFile // empty' >/dev/null
+        echo "warning: pull unsupported for docker-compose configs, skipping"
+    else
+        echo "warning: no image or dockerfile found in config, skipping pull"
+    end
+    return 0
+end
+
 function dc --description "devcontainer wrapper"
     set --local workspace (pwd)
     set --local mounts
@@ -32,10 +78,12 @@ function dc --description "devcontainer wrapper"
             echo "  up, u      Start container (remove existing)"
             echo "    --ssh              Mount ~/.ssh (up only)"
             echo "    --upgrade          Run devcontainer upgrade before up"
+            echo "    --pull             Pull base image(s) before up"
             echo "    --opencode         Install opencode.ai feature"
             echo "    --neovim           Install neovim-pack feature"
             echo "  upf, uf    Start fast (skip post-create, reuse container)"
             echo "  build, b   Build image"
+            echo "    --pull             Pull base image(s) before build"
             echo "    --opencode         Install opencode.ai feature"
             echo "    --neovim           Install neovim-pack feature"
             echo "  exec, e    Run command in container"
@@ -49,12 +97,13 @@ function dc --description "devcontainer wrapper"
             echo "  dc up"
             echo "  dc up --ssh"
             echo "  dc up --opencode --neovim"
+            echo "  dc up --pull"
             echo "  dc exec cargo build"
             echo "  dc sh"
             echo "  dc opencode"
             echo "  dc opencode run \"fix bug\""
         case up u
-            argparse 'ssh' 'upgrade' 'opencode' 'neovim' -- $argv[2..-1]
+            argparse 'ssh' 'upgrade' 'opencode' 'neovim' 'pull' -- $argv[2..-1]
             or return
             if set --query _flag_ssh; and test -d $HOME/.ssh
                 set --append mounts --mount "type=bind,source=$HOME/.ssh,target=/home/vscode/.ssh"
@@ -71,11 +120,14 @@ function dc --description "devcontainer wrapper"
                 set --append features ghcr.io/mmartinortiz/devcontainer-features/neovim-pack:1
             end
             set --local extra_args (__dc_build_feature_args $features)
+            if set --query _flag_pull
+                __dc_pull_images $workspace
+            end
             devcontainer up $mounts $extra_args --remove-existing-container --workspace-folder $workspace
         case upf uf
             devcontainer up $mounts --skip-post-create --workspace-folder $workspace
         case build b
-            argparse 'opencode' 'neovim' -- $argv[2..-1]
+            argparse 'opencode' 'neovim' 'pull' -- $argv[2..-1]
             or return
             set --local features
             if set --query _flag_opencode
@@ -85,6 +137,9 @@ function dc --description "devcontainer wrapper"
                 set --append features ghcr.io/mmartinortiz/devcontainer-features/neovim-pack:1
             end
             set --local extra_args (__dc_build_feature_args $features)
+            if set --query _flag_pull
+                __dc_pull_images $workspace
+            end
             devcontainer build $extra_args --workspace-folder $workspace
         case exec e
             devcontainer exec --workspace-folder $workspace $argv[2..-1]
