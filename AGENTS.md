@@ -22,7 +22,7 @@ Dotfiles managed with chezmoi. Single flat config applying to all systems equall
 
 ## Key Files
 
-- `private_dot_config/fish/config.fish.tmpl` - Main fish config, templated by chezmoi
+- `private_dot_config/fish/config.fish` - Main fish config (plain file, no templating)
 - `private_dot_config/fish/functions/dc.fish` - Devcontainer wrapper (plain fish, no templating)
 - `private_dot_config/tmux/tmux.conf.tmpl` - Tmux config
 - `dot_Brewfile.tmpl` - Homebrew packages
