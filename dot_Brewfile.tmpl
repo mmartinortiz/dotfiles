@@ -1,4 +1,3 @@
-# Common tools (all environments)
 brew "ast-grep"
 brew "bat"
 brew "bat-extras"
@@ -11,9 +10,6 @@ brew "lazygit"
 brew "neovim"
 brew "ripgrep"
 brew "tree-sitter-cli"
-
-{{ if eq .env_type "full" -}}
-# Desktop-only tools
 brew "atuin"
 brew "bottom"
 brew "devcontainer"
@@ -32,10 +28,3 @@ brew "prettier"
 brew "procs"
 brew "starship"
 brew "uv"
-{{ end -}}
-
-{{ if and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "LVD0034") -}}
-# LVD
-brew "fastfetch"
-brew "git-lfs"
-{{ end -}}

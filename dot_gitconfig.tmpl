@@ -2,12 +2,6 @@
   editor = vim
   pager = delta
 
-{{ if (and (eq .chezmoi.os "linux") (eq .chezmoi.hostname "LVD0034")) -}}
-[credential]
-  helper = /usr/local/bin/git-credential-manager
-  useHttpPath = true
-{{ end -}}
-
 [diff]
   algorithm = "histogram"
   compactionHeuristic = true

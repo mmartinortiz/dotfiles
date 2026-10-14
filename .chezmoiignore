@@ -1,16 +1,3 @@
 Readme.md
 tests/
 .config/nvim/lazy-lock.json
-{{- if ne .chezmoi.hostname "LVD0034" }}
-.config/fastfetch
-.config/fish/functions/azure_remote.fish
-{{- end }}
-{{- if eq .env_type "devcontainer" }}
-.tmux
-.config/tmux
-.config/fastfetch
-.config/htop
-.config/nvim/lua/plugins/tmux-vim-navigator.lua
-.config/nvim/lua/plugins/nvim-dev-container.lua
-.config/nvim/lua/plugins/devcontainer.lua
-{{- end }}

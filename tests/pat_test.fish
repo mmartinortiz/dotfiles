@@ -21,10 +21,6 @@ function __test_setup
     set --local pat_src $TMPDIR/pat.fish
     set --local pat_tmpl (status dirname)/../private_dot_config/fish/functions/pat.fish.tmpl
     chezmoi execute-template <$pat_tmpl >$pat_src 2>/dev/null
-    # If template guard excluded everything (devcontainer), strip template lines
-    if not test -s $pat_src
-        string replace --all --regex '^\{\{.*\}\}' '' <$pat_tmpl >$pat_src
-    end
     source $pat_src
 
     # Override registry path to use temp dir

@@ -1,4 +1,3 @@
-{{ if eq .env_type "full" -}}
 function __dc_build_feature_args --description "Build --additional-features args from feature refs"
     if test (count $argv) -eq 0
         return
@@ -169,4 +168,3 @@ function dc --description "devcontainer wrapper"
             devcontainer $argv
     end
 end
-{{ end -}}

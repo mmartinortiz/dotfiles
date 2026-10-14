@@ -1,4 +1,3 @@
-{{ if eq .env_type "full" -}}
 function __pat_registry_path
     echo $HOME/.config/fish/pats.json
 end
@@ -423,4 +422,3 @@ function pat --description "manage personal access tokens via pass"
             return 1
     end
 end
-{{ end -}}
